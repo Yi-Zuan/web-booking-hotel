@@ -69,7 +69,7 @@ window.openModal = function(id) {
     modalBody.innerHTML = '<div style="padding:50px; text-align:center"><i class="fas fa-spinner fa-spin fa-3x"></i><p>Đang tải dữ liệu...</p></div>';
 
     // Gọi API
-    fetch(`http://localhost:3000/api/hotels/${id}`)
+    fetch(`/api/hotels/${id}`)
         .then(res => {
             if (!res.ok) throw new Error('Lỗi tải dữ liệu!');
             return res.json();

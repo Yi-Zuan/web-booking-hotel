@@ -47,6 +47,7 @@ app.get('/api/hotels', (req, res) => {
 app.get('/api/hotels/:id', (req, res) => {
     dbConnection.query('SELECT * FROM hotels WHERE hotel_id = ?', [req.params.id], (err, results) => {
         if (err) return res.status(500).json(err);
+        if (results.length === 0) return res.status(404).json({message: 'Not found'});
         res.json(results[0]);
     });
 });
