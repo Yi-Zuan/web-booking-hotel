@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 1. TÌM KIẾM ---
     function performSearch() {
         const keyword = destinationInput.value.trim();
-        let apiUrl = '/api/hotels'; // Đường dẫn tương đối
+        let apiUrl = '/api/hotels';
         if (keyword) {
             apiUrl += `?city=${encodeURIComponent(keyword)}`;
             if(resultTitle) resultTitle.innerText = `Kết quả cho: "${keyword}"`;
@@ -34,6 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 data.forEach(hotel => {
                     const price = Number(hotel.price_per_night).toLocaleString();
                     const img = hotel.image_url || DEFAULT_IMG;
+                    
+                    // NÚT BẤM LÀ THẺ <a> LINK SANG TRANG DETAIL.HTML
                     resultsDiv.innerHTML += `
                         <div class="hotel-card">
                             <img src="${img}" class="hotel-img" onerror="this.src='${DEFAULT_IMG}'">
@@ -41,7 +43,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <h3>${hotel.name}</h3>
                                 <p>📍 ${hotel.city}</p>
                                 <p style="color:#d82b45; font-weight:bold">${price} VND</p>
-                                <button class="btn-book" onclick="openDetail(${hotel.hotel_id})">XEM CHI TIẾT</button>
+                                
+                                <a href="detail.html?id=${hotel.hotel_id}" class="btn-book" style="text-decoration:none; display:block; margin-top:10px;">
+                                    XEM CHI TIẾT
+                                </a>
                             </div>
                         </div>`;
                 });
