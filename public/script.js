@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Đóng modal khi click ra ngoài
     window.onclick = (e) => { if(e.target.classList.contains('modal')) e.target.style.display = 'none'; };
 
-    // --- 1. TÌM KIẾM ---
+    // --- 0. TÌM KIẾM ---
     function performSearch() {
         const keyword = destinationInput.value.trim();
         let apiUrl = '/api/hotels';
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
-    // --- 2. XEM CHI TIẾT ---
+    // --- 1. XEM CHI TIẾT ---
     window.openDetail = function(id) {
         window.openModalById('hotel-modal');
         document.getElementById('modal-body').innerHTML = '<p style="text-align:center; padding:20px">Đang tải...</p>';
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
-    // --- 3. ĐĂNG KÝ ---
+    // --- 2. ĐĂNG KÝ ---
     window.handleRegister = function() {
         const data = {
             fullName: document.getElementById('reg-name').value,
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 4. ĐĂNG NHẬP ---
+    // --- 3. ĐĂNG NHẬP ---
     window.handleLogin = function() {
         const data = {
             email: document.getElementById('login-email').value,
@@ -107,11 +107,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Chào mừng ' + d.user.full_name);
                 window.closeModal('login-modal');
                 document.getElementById('nav-login').innerText = d.user.full_name;
+                window.isLoggedIn = true; // Đánh dấu trạng thái đăng nhập
             } else {
                 alert(d.message);
             }
         });
-    }
+    };
+    // -- 4. ĐĂNG XUẤT ---:
+    window.handleLogout = function() {
+        fetch('/api/logiut', { method: 'POST'})
+            .then(res => res.json())
+            .then(d => {
+                if(d.success) {
+                    alert('Đăng xuất thành công');
+                    document.getElementById('nav-login').innerText = 'Đăng nhập';
+                    window.isLoggedIn = false; // Cập nhật trạng thái đăng xuất
+                }
+            })
+    } 
+
 
     // --- 5. LIÊN HỆ ---
     window.handleContact = function() {
@@ -150,11 +164,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 7. ĐẶT PHÒNG ---
     window.openBookingForm = function(id, name) {
+        // Kiểm tra trạng thái đăng nhập
+        if (!window.isLoggedIn) {
+            alert('Vui lòng đăng nhập để đặt phòng.');
+            window.openModalById('login-modal');
+            return;
+        }
+    
         window.closeModal('hotel-modal');
         window.openModalById('booking-modal');
         document.getElementById('booking-hotel-name').innerText = name;
         document.getElementById('booking-hotel-id').value = id;
-    }
+    };
 
     window.submitBooking = function() {
         const data = {
