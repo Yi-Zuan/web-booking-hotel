@@ -44,6 +44,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 3. Hàm xử lý đặt phòng
     window.submitBooking = function() {
+        // Kiểm tra trạng thái đăng nhập
+        if (!window.isLoggedIn) {
+            alert('Vui lòng đăng nhập để đặt phòng.');
+            window.location.href = '/'; // Quay về trang chủ để đăng nhập
+            return;
+        }
+
         const data = {
             hotelId: document.getElementById('current-hotel-id').value,
             name: document.getElementById('book-name').value,
