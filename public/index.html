@@ -40,6 +40,26 @@
     </main>
 
     <!-- Thêm section đánh giá -->
+    <section class="search-section">
+        <div class="container">
+            <form id="booking-form" class="search-box">
+                <div class="input-group">
+                    <label>Điểm đến</label>
+                    <input type="text" id="destination" placeholder="Bạn muốn đi đâu? (VD: Hà Nội)">
+                </div>
+                <div class="input-group">
+                    <label>Ngày đi</label>
+                    <input type="date" id="check-in">
+                </div>
+                <div class="input-group">
+                    <label>Khách</label>
+                    <input type="number" value="2" min="1">
+                </div>
+                <button type="submit" id="search-button">TÌM KIẾM</button>
+            </form>
+        </div>
+    </section>
+    
     <section class="testimonials-section">
         <div class="container">
             <h2>Đánh giá từ khách hàng</h2>
@@ -91,26 +111,7 @@
                 </div>
             </div>
         </section>
-
-    <section class="search-section">
-        <div class="container">
-            <form id="booking-form" class="search-box">
-                <div class="input-group">
-                    <label>Điểm đến</label>
-                    <input type="text" id="destination" placeholder="Bạn muốn đi đâu? (VD: Hà Nội)">
-                </div>
-                <div class="input-group">
-                    <label>Ngày đi</label>
-                    <input type="date" id="check-in">
-                </div>
-                <div class="input-group">
-                    <label>Khách</label>
-                    <input type="number" value="2" min="1">
-                </div>
-                <button type="submit" id="search-button">TÌM KIẾM</button>
-            </form>
-        </div>
-    </section>
+        
 
     <main class="container result-container">
         <h2 id="result-title">Khách sạn nổi bật</h2>
