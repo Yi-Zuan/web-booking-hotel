@@ -227,6 +227,23 @@ window.scrollCarousel = function(direction) {
     track.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
 }
 
+// --- TÍNH NĂNG MỚI: NÚT SCROLL TOP ---
+const topBtn = document.getElementById("scrollTopBtn");
+    
+// Khi cuộn xuống 20px thì hiện nút
+window.onscroll = function() {
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        topBtn.style.display = "block";
+    } else {
+        topBtn.style.display = "none";
+    }
+};
+
+// Hàm chạy lên đầu trang khi bấm nút
+window.topFunction = function() {
+    window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
     if(searchButton) {
         searchButton.addEventListener('click', (e) => { e.preventDefault(); performSearch(); });
     }
