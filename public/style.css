@@ -591,3 +591,18 @@ footer {
     font-size: 0.95rem;
     line-height: 1.5;
 }
+
+/* Style cho Slider */
+.carousel-container { position: relative; display: flex; align-items: center; }
+.carousel-track { display: flex; gap: 20px; overflow-x: auto; scroll-behavior: smooth; padding: 20px 0; scrollbar-width: none; }
+.carousel-track::-webkit-scrollbar { display: none; } /* Ẩn thanh cuộn */
+.carousel-item { min-width: 300px; flex: 0 0 auto; } /* Giữ kích thước thẻ cố định */
+.carousel-btn {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: rgba(0,0,0,0.5); color: white; border: none;
+    padding: 10px 15px; cursor: pointer; z-index: 10; border-radius: 50%;
+    font-size: 18px; transition: background 0.3s;
+}
+.carousel-btn:hover { background: #d82b45; }
+.carousel-btn.prev { left: -20px; }
+.carousel-btn.next { right: -20px; }

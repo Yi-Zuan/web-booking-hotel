@@ -49,6 +49,33 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </a>
                             </div>
                         </div>`;
+
+                        resultsDiv.innerHTML = `
+                    <div class="carousel-container">
+                        <button class="carousel-btn prev" onclick="scrollCarousel(-1)">&#10094;</button>
+                        <div class="carousel-track" id="carouselTrack"></div>
+                        <button class="carousel-btn next" onclick="scrollCarousel(1)">&#10095;</button>
+                    </div>`;
+                
+                const track = document.getElementById('carouselTrack');
+                
+                if(data.length === 0) { resultsDiv.innerHTML = '<p style="text-align:center">Không tìm thấy.</p>'; return; }
+                
+                data.forEach(hotel => {
+                    const price = Number(hotel.price_per_night).toLocaleString();
+                    const img = hotel.image_url || DEFAULT_IMG;
+                    // Chú ý class carousel-item được thêm vào
+                    track.innerHTML += `
+                        <div class="hotel-card carousel-item">
+                            <img src="${img}" class="hotel-img" onerror="this.src='${DEFAULT_IMG}'">
+                            <div class="hotel-info">
+                                <h3>${hotel.name}</h3>
+                                <p>📍 ${hotel.city}</p>
+                                <p style="color:#d82b45; font-weight:bold">${price} VND</p>
+                                <button class="btn-book" onclick="openDetail(${hotel.hotel_id})">XEM CHI TIẾT</button>
+                            </div>
+                        </div>`;
+                });
                 });
             });
     }
@@ -193,6 +220,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if(d.success) window.closeModal('booking-modal');
         });
     }
+    // Hàm xử lý nút bấm trượt sang trái/phải
+window.scrollCarousel = function(direction) {
+    const track = document.getElementById('carouselTrack');
+    const scrollAmount = 320; // Chiều rộng thẻ + khoảng cách
+    track.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+}
 
     if(searchButton) {
         searchButton.addEventListener('click', (e) => { e.preventDefault(); performSearch(); });
