@@ -34,31 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 data.forEach(hotel => {
                     const price = Number(hotel.price_per_night).toLocaleString();
                     const img = hotel.image_url || DEFAULT_IMG;
-                    
-                    // NÚT BẤM LÀ THẺ <a> LINK SANG TRANG DETAIL.HTML
-                    resultsDiv.innerHTML += `
-                        <div class="hotel-card">
-                            <img src="${img}" class="hotel-img" onerror="this.src='${DEFAULT_IMG}'">
-                            <div class="hotel-info">
-                                <h3>${hotel.name}</h3>
-                                <p>📍 ${hotel.city}</p>
-                                <p style="color:#d82b45; font-weight:bold">${price} VND</p>
-                                
-                                <a href="detail.html?id=${hotel.hotel_id}" class="btn-book" style="text-decoration:none; display:block; margin-top:10px;">
-                                    XEM CHI TIẾT
-                                </a>
-                            </div>
-                        </div>`;
-
-                        resultsDiv.innerHTML = `
-                    <div class="carousel-container">
-                        <button class="carousel-btn prev" onclick="scrollCarousel(-1)">&#10094;</button>
-                        <div class="carousel-track" id="carouselTrack"></div>
-                        <button class="carousel-btn next" onclick="scrollCarousel(1)">&#10095;</button>
-                    </div>`;
-                
-                const track = document.getElementById('carouselTrack');
-                
                 if(data.length === 0) { resultsDiv.innerHTML = '<p style="text-align:center">Không tìm thấy.</p>'; return; }
                 
                 data.forEach(hotel => {
