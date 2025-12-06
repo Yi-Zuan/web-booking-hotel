@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Hàm xử lý nút bấm trượt sang trái/phải
 window.scrollCarousel = function(direction) {
     const track = document.getElementById('carouselTrack');
-    const scrollAmount = 320; // Chiều rộng thẻ + khoảng cách
+    const scrollAmount = 1200; // Chiều rộng thẻ + khoảng cách
     track.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
 }
 
