@@ -1,0 +1,527 @@
+/* =========================================
+   1. CẤU HÌNH CHUNG (VARIABLES & RESET)
+   ========================================= */
+   :root {
+    --primary-color: #212121; /* Đen than chì */
+    --accent-color: #d4af37;  /* Vàng kim loại */
+    --danger-color: #d82b45;  /* Đỏ điểm nhấn */
+    --text-light: #757575;
+    --bg-light: #f9f9f9;
+    --white: #ffffff;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-light);
+    color: var(--primary-color);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* =========================================
+   2. THANH ĐIỀU HƯỚNG (NAVBAR)
+   ========================================= */
+.navbar {
+    background: var(--white);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.logo-sub {
+    font-size: 12px;
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-light);
+    font-weight: normal;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--primary-color);
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: var(--accent-color);
+}
+
+/* =========================================
+   3. HERO SECTION (VIDEO BACKGROUND)
+   ========================================= */
+.hero {
+    height: 500px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--white);
+    overflow: hidden; /* Cắt phần video thừa */
+    background-color: #000;
+}
+
+/* Video nền nằm dưới cùng */
+.hero-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+/* Lớp phủ màu đen mờ giúp chữ rõ hơn */
+.hero-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 1;
+}
+
+/* Nội dung chữ nổi lên trên */
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-content h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+/* =========================================
+   4. KHUNG TÌM KIẾM (SEARCH BOX)
+   ========================================= */
+.search-section {
+    margin-top: -50px; /* Kéo lên đè lên video */
+    position: relative;
+    z-index: 10;
+    margin-bottom: 50px;
+}
+
+.search-box {
+    background: var(--white);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.input-group {
+    flex: 1;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    font-size: 14px;
+    color: var(--text-light);
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.input-group input {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    outline: none;
+    font-family: inherit;
+}
+
+#search-button {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 14px 30px;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-size: 16px;
+}
+
+#search-button:hover {
+    background-color: var(--accent-color);
+}
+
+/* =========================================
+   5. DANH SÁCH KHÁCH SẠN (RESULTS)
+   ========================================= */
+.result-container h2 {
+    font-family: 'Playfair Display', serif;
+    margin-bottom: 30px;
+    border-bottom: 2px solid var(--accent-color);
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+.hotel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.hotel-card {
+    background: var(--white);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: transform 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+.hotel-card:hover {
+    transform: translateY(-5px);
+}
+
+.hotel-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background-color: #eee;
+}
+
+.hotel-info {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.hotel-info h3 {
+    margin: 0 0 10px;
+    font-size: 18px;
+    color: var(--primary-color);
+}
+
+.hotel-info p {
+    margin: 5px 0;
+    color: var(--text-light);
+    font-size: 14px;
+}
+
+/* Nút Xem chi tiết */
+.btn-book {
+    margin-top: auto; /* Đẩy xuống đáy card */
+    padding: 10px;
+    border: 1px solid var(--primary-color);
+    background: transparent;
+    color: var(--primary-color);
+    text-align: center;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+    border-radius: 4px;
+}
+
+.btn-book:hover {
+    background: var(--primary-color);
+    color: var(--white);
+}
+
+/* =========================================
+   6. MODAL (POPUP LOGIN, REGISTER, CONTACT)
+   ========================================= */
+.modal {
+    display: none; 
+    position: fixed;
+    z-index: 2000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.6);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: var(--white);
+    margin: 5% auto;
+    padding: 0;
+    width: 90%;
+    border-radius: 12px;
+    box-shadow: 0 5px 30px rgba(0,0,0,0.3);
+    position: relative;
+    animation: slideDown 0.4s ease;
+    overflow: hidden;
+}
+
+@keyframes slideDown {
+    from {transform: translateY(-50px); opacity: 0;}
+    to {transform: translateY(0); opacity: 1;}
+}
+
+.close-btn {
+    color: #999;
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 10;
+    line-height: 1;
+}
+
+.close-btn:hover { color: var(--danger-color); }
+
+.modal-info { padding: 30px; }
+
+.modal-title {
+    color: var(--primary-color);
+    margin-top: 0;
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Form input trong modal */
+.form-input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.form-input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+/* =========================================
+   7. FOOTER (MỚI - CHUYÊN NGHIỆP)
+   ========================================= */
+   .main-footer {
+    background-color: #1a1a1a; /* Màu nền tối sang trọng */
+    color: #b0b0b0; /* Màu chữ xám sáng */
+    padding-top: 60px;
+    margin-top: auto;
+    font-size: 14px;
+}
+
+.footer-grid {
+    display: grid;
+    /* Chia thành 4 cột, tự động xuống dòng trên mobile */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    padding-bottom: 40px;
+}
+
+.footer-col h3 {
+    color: #fff;
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.footer-col h4 {
+    color: #fff; /* Tiêu đề cột màu trắng */
+    font-size: 16px;
+    text-transform: uppercase;
+    margin-top: 0;
+    margin-bottom: 20px;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+/* Đường gạch dưới tiêu đề cột */
+.footer-col h4::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 30px;
+    height: 2px;
+    background-color: var(--accent-color); /* Màu vàng kim */
+}
+
+.footer-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-col ul li {
+    margin-bottom: 12px;
+}
+
+.footer-col ul li a {
+    color: #b0b0b0;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.footer-col ul li a:hover {
+    color: var(--accent-color);
+    padding-left: 5px; /* Hiệu ứng đẩy nhẹ khi di chuột */
+}
+
+.footer-col p {
+    margin-bottom: 15px;
+    line-height: 1.6;
+}
+
+.footer-col i {
+    width: 20px;
+    color: var(--accent-color);
+}
+
+/* Icon mạng xã hội */
+.social-links {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.social-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: #333;
+    color: #fff;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.social-links a:hover {
+    background: var(--accent-color);
+    transform: translateY(-3px);
+}
+
+.social-links a i {
+    width: auto;
+    color: inherit;
+}
+
+/* Dòng bản quyền dưới cùng */
+.footer-bottom {
+    background-color: #111;
+    text-align: center;
+    padding: 20px;
+    border-top: 1px solid #333;
+    font-size: 13px;
+}
+
+/* =========================================
+   8. BOOKING HISTORY (LỊCH SỬ ĐẶT PHÒNG)
+   ========================================= */
+   .booking-list-container {
+    max-height: 400px;
+    overflow-y: auto; /* Cho phép cuộn nếu danh sách dài */
+    padding: 10px;
+}
+
+.booking-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f9f9f9;
+    border: 1px solid #eee;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    transition: 0.3s;
+}
+
+.booking-item:hover {
+    border-color: var(--accent-color);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.booking-info h4 {
+    margin: 0 0 5px;
+    color: var(--primary-color);
+    font-size: 16px;
+}
+
+.booking-info p {
+    margin: 3px 0;
+    font-size: 13px;
+    color: #666;
+}
+
+.booking-status {
+    text-align: right;
+    min-width: 120px;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+}
+
+.status-success { background-color: #28a745; } /* Màu xanh lá */
+.status-pending { background-color: #ffc107; color: #333; } /* Màu vàng */
+.status-cancel { background-color: #dc3545; } /* Màu đỏ */
+
+.booking-price {
+    display: block;
+    margin-top: 5px;
+    font-weight: bold;
+    color: var(--danger-color);
+    font-size: 15px;
+}
+
+/* Responsive cho mobile */
+@media (max-width: 600px) {
+    .booking-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .booking-status {
+        margin-top: 10px;
+        text-align: left;
+    }
+}

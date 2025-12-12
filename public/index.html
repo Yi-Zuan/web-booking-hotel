@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meliá Hotels & Resorts</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* Đảm bảo phần Hero là khung chứa tương đối */
+        .hero {
+            position: relative;
+            overflow: hidden; /* Cắt phần video thừa nếu có */
+            /* Xóa ảnh nền cũ trong style.css nếu cần, hoặc để video đè lên */
+            background: #000; 
+        }
+
+        /* Video nền */
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Giúp video phủ kín khung mà không bị méo */
+            z-index: 0; /* Nằm dưới cùng */
+        }
+
+        /* Lớp phủ màu tối (Overlay) */
+        .hero-overlay {
+            position: absolute; /* Bắt buộc absolute để đè lên video */
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: rgba(0,0,0,0.4); /* Màu đen mờ 40% */
+            z-index: 1; /* Nằm trên video */
+        }
+
+        /* Nội dung chữ */
+        .hero-content {
+            position: relative;
+            z-index: 2; /* Nằm trên cùng */
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo">
+                <a href="/" style="text-decoration:none; color:inherit">
+                    MELIÁ BOOKING LUXURY<span class="logo-sub">HOTELS</span>
+                </a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" onclick="event.preventDefault(); window.openBookings()">Phòng đã đặt</a></li>
+                <li><a href="/" onclick="event.preventDefault(); window.location.href='/'">Khách sạn</a></li>
+                <li><a href="#" onclick="event.preventDefault(); window.openOffers()">Ưu đãi</a></li>
+                <li><a href="#" onclick="event.preventDefault(); window.openModalById('register-modal')">Hội viên</a></li>
+                <li><a href="#" onclick="event.preventDefault(); window.openModalById('contact-modal')">Liên hệ</a></li>
+                <li><a href="#" onclick="event.preventDefault(); window.openModalById('login-modal')" id="nav-login">Đăng nhập</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <video class="hero-video" autoplay muted loop playsinline>
+            <source src="video.mp4" type="video/mp4">
+            Trình duyệt của bạn không hỗ trợ video thẻ.
+        </video>
+
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1>Tận hưởng kỳ nghỉ trong mơ</h1>
+            <p>Khám phá vẻ đẹp Việt Nam cùng dịch vụ đẳng cấp.</p>
+        </div>
+    </header>
+
+    <section class="search-section">
+        <div class="container">
+            <form id="booking-form" class="search-box" onsubmit="return false;">
+                <div class="input-group">
+                    <label for="destination">Điểm đến</label>
+                    <input type="text" id="destination" placeholder="Bạn muốn đi đâu? (VD: Hà Nội)">
+                </div>
+                <div class="input-group">
+                    <label for="check-in">Ngày đi</label>
+                    <input type="date" id="check-in">
+                </div>
+                <div class="input-group">
+                    <label>Khách</label>
+                    <input type="number" value="2" min="1">
+                </div>
+                <button type="button" id="search-button">TÌM KIẾM</button>
+            </form>
+        </div>
+    </section>
+
+    <main class="container result-container">
+        <h2 id="result-title">Khách sạn nổi bật</h2>
+        <div id="results" class="hotel-grid">
+            </div>
+    </main>
+
+    <div id="register-modal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <span class="close-btn" onclick="closeModal('register-modal')">&times;</span>
+            <div class="modal-info">
+                <h2 class="modal-title">Đăng Ký Hội Viên</h2>
+                <input type="text" id="reg-name" placeholder="Họ tên" class="form-input">
+                <input type="email" id="reg-email" placeholder="Email" class="form-input">
+                <input type="password" id="reg-pass" placeholder="Mật khẩu" class="form-input">
+                <button class="btn-book" onclick="handleRegister()">ĐĂNG KÝ NGAY</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="login-modal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <span class="close-btn" onclick="closeModal('login-modal')">&times;</span>
+            <div class="modal-info">
+                <h2 class="modal-title">Đăng Nhập</h2>
+                <input type="email" id="login-email" placeholder="Email" class="form-input">
+                <input type="password" id="login-pass" placeholder="Mật khẩu" class="form-input">
+                <button class="btn-book" onclick="handleLogin()">ĐĂNG NHẬP</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="contact-modal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <span class="close-btn" onclick="closeModal('contact-modal')">&times;</span>
+            <div class="modal-info">
+                <h2 class="modal-title">Liên Hệ</h2>
+                <input type="text" id="contact-name" placeholder="Tên" class="form-input">
+                <input type="email" id="contact-email" placeholder="Email" class="form-input">
+                <textarea id="contact-msg" placeholder="Lời nhắn..." class="form-input" rows="4"></textarea>
+                <button class="btn-book" onclick="handleContact()">GỬI TIN NHẮN</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="offers-modal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <span class="close-btn" onclick="closeModal('offers-modal')">&times;</span>
+            <div class="modal-info">
+                <h2 class="modal-title">Ưu Đãi Hot</h2>
+                <div id="offers-list" class="hotel-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <h3>MELIÁ <span class="logo-sub" style="color:#aaa">HOTELS</span></h3>
+                <p>Trải nghiệm dịch vụ đẳng cấp quốc tế tại những điểm đến tuyệt đẹp nhất Việt Nam. Chúng tôi cam kết mang lại kỳ nghỉ đáng nhớ cho bạn và gia đình.</p>
+            </div>
+
+            <div class="footer-col">
+                <h4>Về Meliá</h4>
+                <ul>
+                    <li><a href="#">Câu chuyện thương hiệu</a></li>
+                    <li><a href="#">Cơ hội nghề nghiệp</a></li>
+                    <li><a href="#">Tin tức & Báo chí</a></li>
+                    <li><a href="#">Phát triển bền vững</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Hỗ trợ khách hàng</h4>
+                <ul>
+                    <li><a href="#">Trung tâm trợ giúp</a></li>
+                    <li><a href="#">Chính sách bảo mật</a></li>
+                    <li><a href="#">Điều khoản sử dụng</a></li>
+                    <li><a href="#">Quy chế hoạt động</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Liên hệ</h4>
+                <p><i class="fa-solid fa-location-dot"></i> Ha69CS1</p>
+                <p><i class="fa-solid fa-phone"></i>0965247101</p>
+                <p><i class="fa-solid fa-envelope"></i> huycan01020304@gmail.com</p>
+                
+                <div class="social-links">
+                    <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div id="bookings-modal" class="modal">
+            <div class="modal-content" style="max-width: 700px;">
+                <span class="close-btn" onsclick="closeModal('bookings-modal')">&times;</span>
+                <div class="modal-info">
+                    <h2 class="modal-title">Lịch Sử Đặt Phòng</h2>
+                    <div id="booking-history-list" class="booking-list-container">
+                        <p style="text-align:center">Đang tải dữ liệu...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2025 Melia Hotels International. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+    <script src="script.js"></script>
+</body>
+</html>
