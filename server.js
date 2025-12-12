@@ -105,15 +105,11 @@ app.get('/api/offers', (req, res) => {
     });
 });
 
-// --- 8. API TRA CỨU LỊCH SỬ ĐẶT PHÒNG ---
+// --- 8. API TRA CỨU LỊCH SỬ ---
 app.get('/api/user-bookings', (req, res) => {
     const phone = req.query.phone;
-    
-    if (!phone) {
-        return res.json([]); 
-    }
+    if (!phone) return res.json([]);
 
-    // Lấy đơn hàng KÈM THEO thông tin khách sạn (JOIN)
     const sql = `
         SELECT b.*, h.name as hotel_name, h.image_url, h.price_per_night
         FROM bookings b
@@ -123,10 +119,7 @@ app.get('/api/user-bookings', (req, res) => {
     `;
 
     dbConnection.query(sql, [phone], (err, results) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ error: 'Lỗi Database' });
-        }
+        if (err) return res.status(500).json({ error: 'Lỗi DB' });
         res.json(results);
     });
 });

@@ -173,41 +173,63 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 2. TRA CỨU LỊCH SỬ ĐẶT PHÒNG ---
     window.openHistoryModal = function() {
-        window.openModalById('history-modal'); // Bạn phải đảm bảo có modal này trong HTML
+        window.openModalById('history-modal');
     }
 
     window.viewMyBookings = function() {
         const phone = document.getElementById('history-phone-input').value.trim();
-        if (!phone) { alert("Vui lòng nhập SĐT!"); return; }
-
         const listDiv = document.getElementById('booking-history-list');
-        listDiv.innerHTML = '<p style="text-align:center">Đang tra cứu...</p>';
+
+        if (!phone) {
+            alert("Vui lòng nhập số điện thoại!");
+            return;
+        }
+
+        listDiv.innerHTML = '<p style="text-align:center">⏳ Đang tra cứu...</p>';
 
         fetch(`/api/user-bookings?phone=${phone}`)
             .then(res => res.json())
             .then(data => {
                 listDiv.innerHTML = '';
+                
                 if (data.length === 0) {
-                    listDiv.innerHTML = '<p style="text-align:center; color:red">Không tìm thấy đơn hàng nào.</p>';
+                    listDiv.innerHTML = `
+                        <div style="text-align:center; padding:20px; color:#d82b45;">
+                            <i class="fa-solid fa-circle-exclamation" style="font-size:30px; margin-bottom:10px"></i><br>
+                            Không tìm thấy đơn hàng nào với SĐT: <b>${phone}</b>
+                        </div>`;
                     return;
                 }
+
                 data.forEach(item => {
                     const checkIn = new Date(item.check_in_date).toLocaleDateString('vi-VN');
-                    const price = Number(item.price_per_night).toLocaleString();
+                    const checkOut = new Date(item.check_out_date).toLocaleDateString('vi-VN');
+                    const price = item.price_per_night ? Number(item.price_per_night).toLocaleString() : '---';
+                    const img = item.image_url || DEFAULT_IMG;
+
                     listDiv.innerHTML += `
-                        <div style="border:1px solid #ddd; padding:10px; margin-bottom:10px; border-radius:5px;">
-                            <h4 style="margin:0; color:#d82b45">${item.hotel_name}</h4>
-                            <p style="margin:5px 0; font-size:13px">📅 Ngày đến: ${checkIn}</p>
-                            <p style="margin:0; font-weight:bold">${price} VND</p>
+                        <div style="display:flex; gap:15px; border:1px solid #eee; padding:15px; border-radius:8px; margin-bottom:15px; background:#fff; box-shadow:0 2px 5px rgba(0,0,0,0.05);">
+                            <img src="${img}" style="width:80px; height:80px; object-fit:cover; border-radius:6px;">
+                            <div style="flex:1">
+                                <h4 style="margin:0 0 5px 0; color:#212121;">${item.hotel_name}</h4>
+                                <div style="font-size:13px; color:#555;">
+                                    <p>📅 ${checkIn} - ${checkOut}</p>
+                                    <p>👤 Khách: ${item.user_name}</p>
+                                </div>
+                            </div>
+                            <div style="text-align:right;">
+                                <span style="background:#e6fffa; color:#00b894; padding:3px 8px; border-radius:10px; font-size:12px; font-weight:bold;">Đã xác nhận</span>
+                                <p style="margin-top:10px; font-weight:bold; color:#d82b45;">${price} đ</p>
+                            </div>
                         </div>`;
                 });
             })
             .catch(err => {
                 console.error(err);
-                listDiv.innerHTML = '<p style="text-align:center">Lỗi kết nối!</p>';
+                listDiv.innerHTML = '<p style="text-align:center; color:red">Lỗi kết nối Server!</p>';
             });
     }
-    
+
     // Init
     if (dom.searchBtn) dom.searchBtn.addEventListener('click', (e) => { e.preventDefault(); performSearch(); });
     performSearch();
