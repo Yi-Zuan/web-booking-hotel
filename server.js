@@ -105,81 +105,32 @@ app.get('/api/offers', (req, res) => {
     });
 });
 
-// --- 1. TÌM KIẾM & HIỂN THỊ (FIX LỖI HIỂN THỊ CODE) ---
-function performSearch() {
-    const keyword = destinationInput.value.trim();
-    let apiUrl = '/api/hotels';
-    if (keyword) {
-        apiUrl += `?city=${encodeURIComponent(keyword)}`;
-        if(resultTitle) resultTitle.innerText = `Kết quả cho: "${keyword}"`;
+// --- 8. API TRA CỨU LỊCH SỬ ĐẶT PHÒNG ---
+app.get('/api/user-bookings', (req, res) => {
+    const phone = req.query.phone;
+    
+    if (!phone) {
+        return res.json([]); 
     }
-    
-    resultsDiv.innerHTML = '<p style="text-align:center">⏳ Đang tải...</p>';
-    
-    fetch(apiUrl)
-        .then(res => res.json())
-        .then(data => {
-            resultsDiv.innerHTML = '';
-            if(data.length === 0) { resultsDiv.innerHTML = '<p style="text-align:center">Không tìm thấy khách sạn nào.</p>'; return; }
-            
-            data.forEach(hotel => {
-                const price = Number(hotel.price_per_night).toLocaleString();
-                const img = hotel.image_url || DEFAULT_IMG;
-                
-                // QUAN TRỌNG: DÙNG DẤU HUYỀN (`) ĐỂ BAO QUANH HTML
-                resultsDiv.innerHTML += `
-                    <div class="hotel-card">
-                        <img src="${img}" class="hotel-img" onerror="this.src='${DEFAULT_IMG}'">
-                        <div class="hotel-info">
-                            <h3>${hotel.name}</h3>
-                            <p>📍 ${hotel.city}</p>
-                            <p style="color:#d82b45; font-weight:bold">${price} VND</p>
-                            
-                            <a href="detail.html?id=${hotel.hotel_id}" class="btn-book" style="text-decoration:none; display:block; margin-top:10px; text-align:center;">
-                                XEM CHI TIẾT
-                            </a>
-                        </div>
-                    </div>`;
-            });
-        });
-}
 
-// --- 2. TRA CỨU LỊCH SỬ ĐẶT PHÒNG ---
-window.openHistoryModal = function() {
-    window.openModalById('history-modal'); // Bạn phải đảm bảo có modal này trong HTML
-}
+    // Lấy đơn hàng KÈM THEO thông tin khách sạn (JOIN)
+    const sql = `
+        SELECT b.*, h.name as hotel_name, h.image_url, h.price_per_night
+        FROM bookings b
+        JOIN hotels h ON b.hotel_id = h.hotel_id
+        WHERE b.user_phone = ?
+        ORDER BY b.created_at DESC
+    `;
 
-window.viewMyBookings = function() {
-    const phone = document.getElementById('history-phone-input').value.trim();
-    if (!phone) { alert("Vui lòng nhập SĐT!"); return; }
-
-    const listDiv = document.getElementById('booking-history-list');
-    listDiv.innerHTML = '<p style="text-align:center">Đang tra cứu...</p>';
-
-    fetch(`/api/user-bookings?phone=${phone}`)
-        .then(res => res.json())
-        .then(data => {
-            listDiv.innerHTML = '';
-            if (data.length === 0) {
-                listDiv.innerHTML = '<p style="text-align:center; color:red">Không tìm thấy đơn hàng nào.</p>';
-                return;
-            }
-            data.forEach(item => {
-                const checkIn = new Date(item.check_in_date).toLocaleDateString('vi-VN');
-                const price = Number(item.price_per_night).toLocaleString();
-                listDiv.innerHTML += `
-                    <div style="border:1px solid #ddd; padding:10px; margin-bottom:10px; border-radius:5px;">
-                        <h4 style="margin:0; color:#d82b45">${item.hotel_name}</h4>
-                        <p style="margin:5px 0; font-size:13px">📅 Ngày đến: ${checkIn}</p>
-                        <p style="margin:0; font-weight:bold">${price} VND</p>
-                    </div>`;
-            });
-        })
-        .catch(err => {
+    dbConnection.query(sql, [phone], (err, results) => {
+        if (err) {
             console.error(err);
-            listDiv.innerHTML = '<p style="text-align:center">Lỗi kết nối!</p>';
-        });
-}
+            return res.status(500).json({ error: 'Lỗi Database' });
+        }
+        res.json(results);
+    });
+});
+
 app.listen(PORT, () => {
     console.log(`Server chạy tại cổng ${PORT}`);
 });

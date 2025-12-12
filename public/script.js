@@ -171,155 +171,43 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(() => list.innerHTML = '<p>Lỗi tải ưu đãi.</p>');
     };
 
-    // CHỨC NĂNG XEM LỊCH SỬ ĐẶT PHÒNG (MỚI)
-    // ==========================================
-    window.openBookings = function() {
-        // 1. Kiểm tra đăng nhập
-        const savedUser = localStorage.getItem('user');
-        if (!savedUser) {
-            alert("Vui lòng đăng nhập để xem lịch sử đặt phòng!");
-            window.openModalById('login-modal');
-            return;
-        }
-
-        const user = JSON.parse(savedUser);
-        window.openModalById('bookings-modal');
-        const listDiv = document.getElementById('booking-history-list');
-        listDiv.innerHTML = '<p style="text-align:center">⏳ Đang tải dữ liệu...</p>';
-
-        // 2. Gọi API lấy danh sách (Giả sử API hỗ trợ lọc theo email)
-        // Nếu backend chưa có filter, code này sẽ lấy tất cả booking
-        fetch(`/api/bookings?email=${encodeURIComponent(user.email)}`) 
-            .then(res => res.json())
-            .then(data => {
-                listDiv.innerHTML = '';
-                
-                // Lọc booking của user hiện tại (nếu API trả về tất cả)
-                // const myBookings = data.filter(b => b.email === user.email); 
-                // Nếu API đã lọc sẵn thì dùng luôn data:
-                const myBookings = data; 
-
-                if (!myBookings || myBookings.length === 0) {
-                    listDiv.innerHTML = `
-                        <div style="text-align:center; padding:20px;">
-                            <i class="fa-solid fa-calendar-xmark" style="font-size:40px; color:#ddd"></i>
-                            <p>Bạn chưa có đơn đặt phòng nào.</p>
-                        </div>`;
-                    return;
-                }
-
-                // Sắp xếp đơn mới nhất lên đầu
-                myBookings.reverse();
-
-                // 3. Render ra HTML
-                myBookings.forEach(booking => {
-                    // Xử lý ngày tháng cho đẹp
-                    const start = new Date(booking.dateStart).toLocaleDateString('vi-VN');
-                    const end = new Date(booking.dateEnd).toLocaleDateString('vi-VN');
-                    
-                    // Giả lập tính giá (Nếu API không trả về tổng tiền, ta tự tính hoặc để trống)
-                    // Ở đây tôi giả định booking có trường hotelName, nếu không có phải fetch thêm
-                    const hotelName = booking.hotelName || booking.name || "Khách sạn Meliá"; 
-                    const statusClass = 'status-success'; // Mặc định xanh
-                    const statusText = 'Đã xác nhận';
-
-                    listDiv.innerHTML += `
-                        <div class="booking-item">
-                            <div class="booking-info">
-                                <h4>🏨 ${hotelName}</h4>
-                                <p><i class="fa-regular fa-calendar"></i> ${start} - ${end}</p>
-                                <p><i class="fa-solid fa-user"></i> ${booking.name} (${booking.phone})</p>
-                            </div>
-                            <div class="booking-status">
-                                <span class="status-badge ${statusClass}">${statusText}</span>
-                                <span class="booking-price">Đã đặt</span>
-                            </div>
-                        </div>`;
-                });
-            })
-            .catch(err => {
-                console.error(err);
-                listDiv.innerHTML = '<p style="text-align:center; color:red">Không thể tải lịch sử đơn hàng.</p>';
-            });
-    };
-
-    // --- 8. TÍNH NĂNG: XEM LỊCH SỬ ĐẶT PHÒNG ---
-
-    // Hàm mở cửa sổ (Modal) nhập SĐT
+    // --- 2. TRA CỨU LỊCH SỬ ĐẶT PHÒNG ---
     window.openHistoryModal = function() {
-        // Đóng các modal khác nếu đang mở
-        window.closeAllModals(); 
-        window.openModalById('history-modal');
+        window.openModalById('history-modal'); // Bạn phải đảm bảo có modal này trong HTML
     }
 
-    // Hàm gọi API để tìm đơn hàng
     window.viewMyBookings = function() {
-        const phoneInput = document.getElementById('history-phone-input');
-        const phone = phoneInput.value.trim();
+        const phone = document.getElementById('history-phone-input').value.trim();
+        if (!phone) { alert("Vui lòng nhập SĐT!"); return; }
+
         const listDiv = document.getElementById('booking-history-list');
+        listDiv.innerHTML = '<p style="text-align:center">Đang tra cứu...</p>';
 
-        // 1. Kiểm tra xem đã nhập SĐT chưa
-        if (!phone) {
-            alert("Vui lòng nhập số điện thoại đã dùng để đặt phòng!");
-            return;
-        }
-
-        // 2. Hiện thông báo đang tải
-        listDiv.innerHTML = '<p style="text-align:center; padding:20px;">⏳ Đang tìm kiếm dữ liệu...</p>';
-
-        // 3. Gọi API (API này bạn đã viết trong server.js lúc nãy)
         fetch(`/api/user-bookings?phone=${phone}`)
             .then(res => res.json())
             .then(data => {
-                listDiv.innerHTML = ''; // Xóa thông báo đang tải
-
-                // Trường hợp không tìm thấy đơn nào
+                listDiv.innerHTML = '';
                 if (data.length === 0) {
-                    listDiv.innerHTML = `
-                        <div style="text-align:center; padding:20px; color:red;">
-                            <i class="fa-solid fa-circle-exclamation" style="font-size:30px; margin-bottom:10px"></i><br>
-                            Không tìm thấy đơn đặt phòng nào với SĐT: <b>${phone}</b>
-                        </div>`;
+                    listDiv.innerHTML = '<p style="text-align:center; color:red">Không tìm thấy đơn hàng nào.</p>';
                     return;
                 }
-
-                // Trường hợp CÓ dữ liệu -> Vẽ ra màn hình
                 data.forEach(item => {
-                    // Format ngày tháng cho dễ nhìn (dạng ngày/tháng/năm)
                     const checkIn = new Date(item.check_in_date).toLocaleDateString('vi-VN');
-                    const checkOut = new Date(item.check_out_date).toLocaleDateString('vi-VN');
-                    const created = new Date(item.created_at).toLocaleDateString('vi-VN');
-                    
-                    // Format giá tiền
-                    const price = item.price_per_night ? Number(item.price_per_night).toLocaleString() : '---';
-                    const img = item.image_url || 'https://via.placeholder.com/100';
-
-                    // Tạo thẻ HTML cho từng đơn hàng
+                    const price = Number(item.price_per_night).toLocaleString();
                     listDiv.innerHTML += `
-                        <div style="display:flex; gap:15px; border:1px solid #eee; padding:15px; border-radius:8px; margin-bottom:15px; background:#fff; box-shadow:0 2px 5px rgba(0,0,0,0.05);">
-                            <img src="${img}" style="width:100px; height:100px; object-fit:cover; border-radius:6px;">
-                            <div style="flex:1">
-                                <h4 style="margin:0 0 5px 0; color:#d82b45;">${item.hotel_name}</h4>
-                                <div style="font-size:13px; color:#555; line-height:1.6;">
-                                    <p><i class="fa-solid fa-user"></i> Khách: <b>${item.user_name}</b></p>
-                                    <p><i class="fa-solid fa-calendar-days"></i> Lịch: ${checkIn} - ${checkOut}</p>
-                                    <p><i class="fa-solid fa-clock"></i> Ngày đặt: ${created}</p>
-                                </div>
-                            </div>
-                            <div style="text-align:right; font-size:12px;">
-                                <span style="background:#e6fffa; color:#00b894; padding:3px 8px; border-radius:10px; border:1px solid #00b894; font-weight:bold;">Đã xác nhận</span>
-                                <p style="margin-top:10px; font-weight:bold; font-size:14px;">${price} VND</p>
-                            </div>
-                        </div>
-                    `;
+                        <div style="border:1px solid #ddd; padding:10px; margin-bottom:10px; border-radius:5px;">
+                            <h4 style="margin:0; color:#d82b45">${item.hotel_name}</h4>
+                            <p style="margin:5px 0; font-size:13px">📅 Ngày đến: ${checkIn}</p>
+                            <p style="margin:0; font-weight:bold">${price} VND</p>
+                        </div>`;
                 });
             })
             .catch(err => {
                 console.error(err);
-                listDiv.innerHTML = '<p style="text-align:center; color:red">Lỗi kết nối Server!</p>';
+                listDiv.innerHTML = '<p style="text-align:center">Lỗi kết nối!</p>';
             });
     }
-
+    
     // Init
     if (dom.searchBtn) dom.searchBtn.addEventListener('click', (e) => { e.preventDefault(); performSearch(); });
     performSearch();
