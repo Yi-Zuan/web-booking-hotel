@@ -105,65 +105,81 @@ app.get('/api/offers', (req, res) => {
     });
 });
 
-// --- API ĐẶT PHÒNG (Lưu vào bảng bookings) ---
-app.post('/api/bookings', (req, res) => {
-    const { hotelId, name, phone, dateStart, dateEnd } = req.body;
-
-    // 1. Kiểm tra dữ liệu đầu vào
-    if (!hotelId || !name || !phone || !dateStart || !dateEnd) {
-        return res.status(400).json({ success: false, message: 'Thiếu thông tin đặt phòng!' });
+// --- 1. TÌM KIẾM & HIỂN THỊ (FIX LỖI HIỂN THỊ CODE) ---
+function performSearch() {
+    const keyword = destinationInput.value.trim();
+    let apiUrl = '/api/hotels';
+    if (keyword) {
+        apiUrl += `?city=${encodeURIComponent(keyword)}`;
+        if(resultTitle) resultTitle.innerText = `Kết quả cho: "${keyword}"`;
     }
-
-    // 2. Câu lệnh SQL chèn dữ liệu
-    const sql = `
-        INSERT INTO bookings (hotel_id, user_name, user_phone, check_in_date, check_out_date) 
-        VALUES (?, ?, ?, ?, ?)
-    `;
-
-    // 3. Thực thi
-    dbConnection.query(sql, [hotelId, name, phone, dateStart, dateEnd], (err, result) => {
-        if (err) {
-            console.error("Lỗi đặt phòng:", err);
-            return res.status(500).json({ success: false, message: 'Lỗi server, không thể lưu đơn.' });
-        }
-        res.json({ success: true, message: 'Đặt phòng thành công! Chúng tôi sẽ liên hệ sớm.' });
-    });
-});
-
-// --- API XEM LỊCH SỬ (Check phòng theo SĐT) ---
-app.get('/api/user-bookings', (req, res) => {
-    const phone = req.query.phone;
     
-    if (!phone) {
-        return res.json([]); // Nếu không có SĐT thì trả về rỗng
-    }
+    resultsDiv.innerHTML = '<p style="text-align:center">⏳ Đang tải...</p>';
+    
+    fetch(apiUrl)
+        .then(res => res.json())
+        .then(data => {
+            resultsDiv.innerHTML = '';
+            if(data.length === 0) { resultsDiv.innerHTML = '<p style="text-align:center">Không tìm thấy khách sạn nào.</p>'; return; }
+            
+            data.forEach(hotel => {
+                const price = Number(hotel.price_per_night).toLocaleString();
+                const img = hotel.image_url || DEFAULT_IMG;
+                
+                // QUAN TRỌNG: DÙNG DẤU HUYỀN (`) ĐỂ BAO QUANH HTML
+                resultsDiv.innerHTML += `
+                    <div class="hotel-card">
+                        <img src="${img}" class="hotel-img" onerror="this.src='${DEFAULT_IMG}'">
+                        <div class="hotel-info">
+                            <h3>${hotel.name}</h3>
+                            <p>📍 ${hotel.city}</p>
+                            <p style="color:#d82b45; font-weight:bold">${price} VND</p>
+                            
+                            <a href="detail.html?id=${hotel.hotel_id}" class="btn-book" style="text-decoration:none; display:block; margin-top:10px; text-align:center;">
+                                XEM CHI TIẾT
+                            </a>
+                        </div>
+                    </div>`;
+            });
+        });
+}
 
-    // Câu lệnh SQL nâng cao: Lấy thông tin đơn hàng KÈM THEO thông tin khách sạn
-    const sql = `
-        SELECT 
-            b.id, 
-            b.user_name, 
-            b.check_in_date, 
-            b.check_out_date, 
-            b.created_at,
-            h.name AS hotel_name,       -- Lấy tên khách sạn
-            h.image_url AS hotel_image, -- Lấy ảnh khách sạn
-            h.price_per_night
-        FROM bookings b
-        JOIN hotels h ON b.hotel_id = h.hotel_id
-        WHERE b.user_phone = ?
-        ORDER BY b.created_at DESC
-    `;
+// --- 2. TRA CỨU LỊCH SỬ ĐẶT PHÒNG ---
+window.openHistoryModal = function() {
+    window.openModalById('history-modal'); // Bạn phải đảm bảo có modal này trong HTML
+}
 
-    dbConnection.query(sql, [phone], (err, results) => {
-        if (err) {
-            console.error("Lỗi lấy lịch sử:", err);
-            return res.status(500).json({ error: 'Lỗi server' });
-        }
-        res.json(results); // Trả về danh sách đơn hàng
-    });
-});
+window.viewMyBookings = function() {
+    const phone = document.getElementById('history-phone-input').value.trim();
+    if (!phone) { alert("Vui lòng nhập SĐT!"); return; }
 
+    const listDiv = document.getElementById('booking-history-list');
+    listDiv.innerHTML = '<p style="text-align:center">Đang tra cứu...</p>';
+
+    fetch(`/api/user-bookings?phone=${phone}`)
+        .then(res => res.json())
+        .then(data => {
+            listDiv.innerHTML = '';
+            if (data.length === 0) {
+                listDiv.innerHTML = '<p style="text-align:center; color:red">Không tìm thấy đơn hàng nào.</p>';
+                return;
+            }
+            data.forEach(item => {
+                const checkIn = new Date(item.check_in_date).toLocaleDateString('vi-VN');
+                const price = Number(item.price_per_night).toLocaleString();
+                listDiv.innerHTML += `
+                    <div style="border:1px solid #ddd; padding:10px; margin-bottom:10px; border-radius:5px;">
+                        <h4 style="margin:0; color:#d82b45">${item.hotel_name}</h4>
+                        <p style="margin:5px 0; font-size:13px">📅 Ngày đến: ${checkIn}</p>
+                        <p style="margin:0; font-weight:bold">${price} VND</p>
+                    </div>`;
+            });
+        })
+        .catch(err => {
+            console.error(err);
+            listDiv.innerHTML = '<p style="text-align:center">Lỗi kết nối!</p>';
+        });
+}
 app.listen(PORT, () => {
     console.log(`Server chạy tại cổng ${PORT}`);
 });
