@@ -105,26 +105,6 @@ app.get('/api/offers', (req, res) => {
     });
 });
 
-// API Lịch sử (Nếu có rồi thì không cần thêm lại)
-app.get('/api/user-bookings', (req, res) => {
-    const phone = req.query.phone;
-    if (!phone) return res.json([]);
-    
-    // Câu lệnh lấy đơn hàng + thông tin khách sạn
-    const sql = `
-        SELECT b.*, h.name as hotel_name, h.image_url, h.price_per_night
-        FROM bookings b
-        JOIN hotels h ON b.hotel_id = h.hotel_id
-        WHERE b.user_phone = ?
-        ORDER BY b.created_at DESC
-    `;
-    
-    dbConnection.query(sql, [phone], (err, results) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json(results);
-    });
-});
-
 app.listen(PORT, () => {
     console.log(`Server chạy tại cổng ${PORT}`);
 });
