@@ -243,7 +243,82 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     };
 
-    
+    // --- 8. TÍNH NĂNG: XEM LỊCH SỬ ĐẶT PHÒNG ---
+
+    // Hàm mở cửa sổ (Modal) nhập SĐT
+    window.openHistoryModal = function() {
+        // Đóng các modal khác nếu đang mở
+        window.closeAllModals(); 
+        window.openModalById('history-modal');
+    }
+
+    // Hàm gọi API để tìm đơn hàng
+    window.viewMyBookings = function() {
+        const phoneInput = document.getElementById('history-phone-input');
+        const phone = phoneInput.value.trim();
+        const listDiv = document.getElementById('booking-history-list');
+
+        // 1. Kiểm tra xem đã nhập SĐT chưa
+        if (!phone) {
+            alert("Vui lòng nhập số điện thoại đã dùng để đặt phòng!");
+            return;
+        }
+
+        // 2. Hiện thông báo đang tải
+        listDiv.innerHTML = '<p style="text-align:center; padding:20px;">⏳ Đang tìm kiếm dữ liệu...</p>';
+
+        // 3. Gọi API (API này bạn đã viết trong server.js lúc nãy)
+        fetch(`/api/user-bookings?phone=${phone}`)
+            .then(res => res.json())
+            .then(data => {
+                listDiv.innerHTML = ''; // Xóa thông báo đang tải
+
+                // Trường hợp không tìm thấy đơn nào
+                if (data.length === 0) {
+                    listDiv.innerHTML = `
+                        <div style="text-align:center; padding:20px; color:red;">
+                            <i class="fa-solid fa-circle-exclamation" style="font-size:30px; margin-bottom:10px"></i><br>
+                            Không tìm thấy đơn đặt phòng nào với SĐT: <b>${phone}</b>
+                        </div>`;
+                    return;
+                }
+
+                // Trường hợp CÓ dữ liệu -> Vẽ ra màn hình
+                data.forEach(item => {
+                    // Format ngày tháng cho dễ nhìn (dạng ngày/tháng/năm)
+                    const checkIn = new Date(item.check_in_date).toLocaleDateString('vi-VN');
+                    const checkOut = new Date(item.check_out_date).toLocaleDateString('vi-VN');
+                    const created = new Date(item.created_at).toLocaleDateString('vi-VN');
+                    
+                    // Format giá tiền
+                    const price = item.price_per_night ? Number(item.price_per_night).toLocaleString() : '---';
+                    const img = item.image_url || 'https://via.placeholder.com/100';
+
+                    // Tạo thẻ HTML cho từng đơn hàng
+                    listDiv.innerHTML += `
+                        <div style="display:flex; gap:15px; border:1px solid #eee; padding:15px; border-radius:8px; margin-bottom:15px; background:#fff; box-shadow:0 2px 5px rgba(0,0,0,0.05);">
+                            <img src="${img}" style="width:100px; height:100px; object-fit:cover; border-radius:6px;">
+                            <div style="flex:1">
+                                <h4 style="margin:0 0 5px 0; color:#d82b45;">${item.hotel_name}</h4>
+                                <div style="font-size:13px; color:#555; line-height:1.6;">
+                                    <p><i class="fa-solid fa-user"></i> Khách: <b>${item.user_name}</b></p>
+                                    <p><i class="fa-solid fa-calendar-days"></i> Lịch: ${checkIn} - ${checkOut}</p>
+                                    <p><i class="fa-solid fa-clock"></i> Ngày đặt: ${created}</p>
+                                </div>
+                            </div>
+                            <div style="text-align:right; font-size:12px;">
+                                <span style="background:#e6fffa; color:#00b894; padding:3px 8px; border-radius:10px; border:1px solid #00b894; font-weight:bold;">Đã xác nhận</span>
+                                <p style="margin-top:10px; font-weight:bold; font-size:14px;">${price} VND</p>
+                            </div>
+                        </div>
+                    `;
+                });
+            })
+            .catch(err => {
+                console.error(err);
+                listDiv.innerHTML = '<p style="text-align:center; color:red">Lỗi kết nối Server!</p>';
+            });
+    }
 
     // Init
     if (dom.searchBtn) dom.searchBtn.addEventListener('click', (e) => { e.preventDefault(); performSearch(); });

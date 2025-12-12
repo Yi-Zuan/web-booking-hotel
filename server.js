@@ -105,59 +105,62 @@ app.get('/api/offers', (req, res) => {
     });
 });
 
-// --- Trong server.js, tại app.get('/api/bookings') ---
-app.get('/api/bookings', (req, res) => {
-    const userEmail = req.query.email;
-    
-    // Câu lệnh JOIN SQL: Lấy thông tin booking và tên khách sạn tương ứng
+// --- API ĐẶT PHÒNG (Lưu vào bảng bookings) ---
+app.post('/api/bookings', (req, res) => {
+    const { hotelId, name, phone, dateStart, dateEnd } = req.body;
+
+    // 1. Kiểm tra dữ liệu đầu vào
+    if (!hotelId || !name || !phone || !dateStart || !dateEnd) {
+        return res.status(400).json({ success: false, message: 'Thiếu thông tin đặt phòng!' });
+    }
+
+    // 2. Câu lệnh SQL chèn dữ liệu
     const sql = `
-        SELECT 
-            b.*, 
-            h.name AS hotelName, 
-            h.price_per_night 
-        FROM bookings b
-        JOIN hotels h ON b.hotel_id = h.hotel_id
-        WHERE b.user_email = ? 
-        ORDER BY b.created_at DESC;
+        INSERT INTO bookings (hotel_id, user_name, user_phone, check_in_date, check_out_date) 
+        VALUES (?, ?, ?, ?, ?)
     `;
-    
-    // Thực thi truy vấn
-    db.query(sql, [userEmail], (err, results) => {
+
+    // 3. Thực thi
+    dbConnection.query(sql, [hotelId, name, phone, dateStart, dateEnd], (err, result) => {
         if (err) {
-            console.error('LỖI TRUY VẤN LỊCH SỬ BOOKING:', err);
-            // Quan trọng: Trả về lỗi server 500 để Frontend hiển thị thông báo lỗi
-            return res.status(500).json({ success: false, message: 'Lỗi server khi tải dữ liệu.' });
+            console.error("Lỗi đặt phòng:", err);
+            return res.status(500).json({ success: false, message: 'Lỗi server, không thể lưu đơn.' });
         }
-        // Trả về dữ liệu thành công
-        res.json(results);
+        res.json({ success: true, message: 'Đặt phòng thành công! Chúng tôi sẽ liên hệ sớm.' });
     });
 });
 
-// --- Trong server.js, tại app.get('/api/bookings') ---
-app.get('/api/bookings', (req, res) => {
-    const userEmail = req.query.email;
+// --- API XEM LỊCH SỬ (Check phòng theo SĐT) ---
+app.get('/api/user-bookings', (req, res) => {
+    const phone = req.query.phone;
     
-    // Câu lệnh JOIN SQL: Lấy thông tin booking và tên khách sạn tương ứng
+    if (!phone) {
+        return res.json([]); // Nếu không có SĐT thì trả về rỗng
+    }
+
+    // Câu lệnh SQL nâng cao: Lấy thông tin đơn hàng KÈM THEO thông tin khách sạn
     const sql = `
         SELECT 
-            b.*, 
-            h.name AS hotelName, 
-            h.price_per_night 
+            b.id, 
+            b.user_name, 
+            b.check_in_date, 
+            b.check_out_date, 
+            b.created_at,
+            h.name AS hotel_name,       -- Lấy tên khách sạn
+            h.image_url AS hotel_image, -- Lấy ảnh khách sạn
+            h.price_per_night
         FROM bookings b
         JOIN hotels h ON b.hotel_id = h.hotel_id
-        WHERE b.user_email = ? 
-        ORDER BY b.created_at DESC;
+        WHERE b.user_phone = ?
+        ORDER BY b.created_at DESC
     `;
-    
-    // Thực thi truy vấn
-    db.query(sql, [userEmail], (err, results) => {
+
+    dbConnection.query(sql, [phone], (err, results) => {
         if (err) {
-            console.error('LỖI TRUY VẤN LỊCH SỬ BOOKING:', err);
-            // Quan trọng: Trả về lỗi server 500 để Frontend hiển thị thông báo lỗi
-            return res.status(500).json({ success: false, message: 'Lỗi server khi tải dữ liệu.' });
+            console.error("Lỗi lấy lịch sử:", err);
+            return res.status(500).json({ error: 'Lỗi server' });
         }
-        // Trả về dữ liệu thành công
-        res.json(results);
+        res.json(results); // Trả về danh sách đơn hàng
     });
 });
 
