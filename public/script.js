@@ -171,8 +171,9 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(() => list.innerHTML = '<p>Lỗi tải ưu đãi.</p>');
     };
 
-    // --- 2. TRA CỨU LỊCH SỬ ĐẶT PHÒNG ---
+    // --- TÍNH NĂNG: XEM LỊCH SỬ ĐẶT PHÒNG ---
     window.openHistoryModal = function() {
+        window.closeAllModals(); // Đóng các modal khác
         window.openModalById('history-modal');
     }
 
@@ -180,10 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const phone = document.getElementById('history-phone-input').value.trim();
         const listDiv = document.getElementById('booking-history-list');
 
-        if (!phone) {
-            alert("Vui lòng nhập số điện thoại!");
-            return;
-        }
+        if (!phone) { alert("Vui lòng nhập số điện thoại!"); return; }
 
         listDiv.innerHTML = '<p style="text-align:center">⏳ Đang tra cứu...</p>';
 
@@ -193,11 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 listDiv.innerHTML = '';
                 
                 if (data.length === 0) {
-                    listDiv.innerHTML = `
-                        <div style="text-align:center; padding:20px; color:#d82b45;">
-                            <i class="fa-solid fa-circle-exclamation" style="font-size:30px; margin-bottom:10px"></i><br>
-                            Không tìm thấy đơn hàng nào với SĐT: <b>${phone}</b>
-                        </div>`;
+                    listDiv.innerHTML = '<p style="text-align:center; color:red">Không tìm thấy đơn nào với SĐT này.</p>';
                     return;
                 }
 
@@ -205,10 +199,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     const checkIn = new Date(item.check_in_date).toLocaleDateString('vi-VN');
                     const checkOut = new Date(item.check_out_date).toLocaleDateString('vi-VN');
                     const price = item.price_per_night ? Number(item.price_per_night).toLocaleString() : '---';
-                    const img = item.image_url || DEFAULT_IMG;
+                    const img = item.image_url || 'https://via.placeholder.com/100';
 
                     listDiv.innerHTML += `
-                        <div style="display:flex; gap:15px; border:1px solid #eee; padding:15px; border-radius:8px; margin-bottom:15px; background:#fff; box-shadow:0 2px 5px rgba(0,0,0,0.05);">
+                        <div style="display:flex; gap:15px; border:1px solid #eee; padding:15px; border-radius:8px; margin-bottom:15px; background:#fff;">
                             <img src="${img}" style="width:80px; height:80px; object-fit:cover; border-radius:6px;">
                             <div style="flex:1">
                                 <h4 style="margin:0 0 5px 0; color:#212121;">${item.hotel_name}</h4>
@@ -218,16 +212,13 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </div>
                             </div>
                             <div style="text-align:right;">
-                                <span style="background:#e6fffa; color:#00b894; padding:3px 8px; border-radius:10px; font-size:12px; font-weight:bold;">Đã xác nhận</span>
+                                <span style="background:#e6fffa; color:#00b894; padding:3px 8px; border-radius:10px; font-size:12px; font-weight:bold;">Thành công</span>
                                 <p style="margin-top:10px; font-weight:bold; color:#d82b45;">${price} đ</p>
                             </div>
                         </div>`;
                 });
             })
-            .catch(err => {
-                console.error(err);
-                listDiv.innerHTML = '<p style="text-align:center; color:red">Lỗi kết nối Server!</p>';
-            });
+            .catch(err => listDiv.innerHTML = '<p style="text-align:center; color:red">Lỗi kết nối!</p>');
     }
 
     // Init
