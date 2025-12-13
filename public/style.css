@@ -419,12 +419,115 @@ body {
 /* =========================================
    8. FOOTER & NÚT LÊN ĐẦU TRANG
    ========================================= */
-footer {
-    background-color: #111;
+/* =========================================
+   FOOTER LUXURY (GIAO DIỆN ĐEN)
+   ========================================= */
+   .main-footer {
+    background-color: #000000; /* Nền đen tuyền như ảnh */
+    color: #b0b0b0;
+    padding-top: 80px;
+    margin-top: 80px;
+    font-size: 14px;
+    text-align: center; /* Căn giữa nội dung chính */
+}
+
+/* Header Footer (Logo & Slogan) */
+.footer-header {
+    margin-bottom: 60px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid #333; /* Đường gạch ngang mờ */
+}
+
+/* Lưới cột (3 cột) */
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    text-align: left; /* Text trong cột căn trái */
+    padding-bottom: 40px;
+}
+
+/* Tiêu đề cột */
+.footer-col h4 {
     color: #fff;
-    padding: 60px 0 20px;
-    text-align: center;
-    margin-top: 60px;
+    font-size: 18px;
+    margin-bottom: 25px;
+    font-weight: 700;
+}
+
+/* Link liên kết */
+.footer-col ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-col ul li {
+    margin-bottom: 15px;
+}
+
+.footer-col ul li a {
+    color: #667eea; /* Màu tím/xanh như ảnh cũ của bạn */
+    text-decoration: underline; /* Gạch chân như ảnh */
+    transition: all 0.3s;
+    font-size: 15px;
+}
+/* Hoặc nếu thích màu vàng kim sang trọng thì dùng mã này: */
+/* .footer-col ul li a { color: #d4af37; text-decoration: none; } */
+
+.footer-col ul li a:hover {
+    color: #fff;
+    text-decoration: none;
+}
+
+/* Cột liên hệ */
+.contact-col p {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+    font-weight: 500;
+}
+.contact-col i { width: 20px; text-align: center; }
+
+/* Form nhập email nhỏ ở footer */
+.footer-newsletter {
+    display: flex;
+    margin-top: 20px;
+    background: #222;
+    border-radius: 4px;
+    padding: 5px;
+}
+.footer-newsletter input {
+    background: transparent;
+    border: none;
+    color: white;
+    padding: 10px;
+    width: 100%;
+    outline: none;
+}
+.footer-newsletter button {
+    background: #d4af37;
+    border: none;
+    color: black;
+    padding: 0 15px;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+/* Dòng bản quyền */
+.footer-bottom {
+    background-color: #0a0a0a;
+    padding: 20px;
+    border-top: 1px solid #222;
+    font-size: 13px;
+    color: #555;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .footer-grid { text-align: center; }
+    .contact-col p { justify-content: center; }
 }
 
 .newsletter input {
@@ -455,3 +558,4 @@ footer {
     background-color: var(--primary-color);
     transform: translateY(-5px);
 }
+
