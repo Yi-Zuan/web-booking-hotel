@@ -633,3 +633,47 @@ hr {
     padding-left: 15px;
 }
 .section h3::after { display: none; } /* Bỏ gạch chân cũ */
+
+/* =================================================================
+   ✨ NÂNG CẤP HIỆU ỨNG HÌNH ẢNH (Dán vào cuối file style.css)
+   ================================================================= */
+
+/* --- 1. Ảnh trong thẻ khách sạn (Trang chủ) --- */
+
+/* Đảm bảo thẻ chứa ảnh ẩn phần thừa khi zoom */
+.hotel-card {
+    overflow: hidden; 
+    /* Thêm bóng đổ mềm mại cho cả thẻ */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); 
+}
+
+.hotel-img {
+    /* Thêm transition mượt mà cho cả filter độ sáng */
+    transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), filter 0.4s ease;
+    /* Mặc định hơi tối xuống 1 chút để làm nổi bật khi hover */
+    filter: brightness(0.97);
+}
+
+/* Hiệu ứng khi di chuột vào thẻ khách sạn */
+.hotel-card:hover .hotel-img {
+    /* Phóng to ảnh nhẹ nhàng bên trong khung */
+    transform: scale(1.08); 
+    /* Tăng độ sáng và tương phản giúp ảnh rực rỡ hơn */
+    filter: brightness(1.05) contrast(1.08);
+}
+
+
+/* --- 2. Ảnh nhỏ trong phần Lịch sử đặt phòng (Booking Item) --- */
+.booking-item img {
+    /* Thêm bóng đổ nhỏ tạo cảm giác nổi nhẹ */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    /* Viền mỏng giúp ảnh sắc nét hơn */
+    border: 1px solid rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Khi di chuột vào đơn hàng, ảnh nhỏ sẽ "nhảy" lên một chút */
+.booking-item:hover img {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}

@@ -580,3 +580,40 @@ body {
     background-color: #fff;
     box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
 }
+
+/* =================================================================
+   ✨ NÂNG CẤP HIỆU ỨNG HÌNH ẢNH GALLERY (Dán vào cuối file detail.css)
+   ================================================================= */
+
+/* --- 1. Thiết lập chung cho tất cả ảnh trong thư viện --- */
+.hotel-gallery-grid img, 
+.thumbnail-grid img {
+    /* Tạo bóng đổ nền tảng nhẹ nhàng */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    /* Đường viền trong suốt chuẩn bị cho hiệu ứng hover */
+    border: 2px solid transparent;
+    /* Transition mượt mà cho tất cả các thuộc tính */
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    /* Đảm bảo ảnh không bị méo */
+    object-fit: cover;
+}
+
+/* --- 2. Nhấn mạnh Ảnh Chính (Main Image) --- */
+.main-image img {
+    /* Bóng đổ sâu hơn và đậm hơn cho ảnh chính */
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    z-index: 2; /* Đảm bảo nó nổi lên trên cùng */
+}
+
+/* --- 3. Hiệu ứng HOVER cực đẹp cho các ảnh nhỏ --- */
+.thumbnail-grid img:hover,
+.main-image img:hover {
+    /* Nhấc ảnh lên và phóng to nhẹ */
+    transform: translateY(-5px) scale(1.02);
+    /* Bóng đổ sâu hơn khi hover tạo cảm giác 3D */
+    box-shadow: 0 25px 60px rgba(212, 175, 55, 0.25); /* Bóng có chút ánh vàng */
+    /* Làm ảnh sáng và rực rỡ hơn */
+    filter: brightness(1.1) contrast(1.05);
+    /* Thêm viền màu Vàng Kim sang trọng */
+    border-color: var(--secondary); 
+}
