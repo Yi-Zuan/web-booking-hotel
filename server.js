@@ -15,6 +15,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 // Cấu hình để chạy giao diện từ thư mục public
 app.use(express.static(path.join(__dirname, 'public')));
+app.set('trust proxy', 1);
 
 // --- KẾT NỐI DATABASE ---
 const dbConnection = mysql.createConnection({
