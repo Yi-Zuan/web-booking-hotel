@@ -238,6 +238,10 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
+    if (password.length < 6) {
+        return res.status(400).json({ message: 'Password quá ngắn' });
+      }
+
     // Init
     if (dom.searchBtn) dom.searchBtn.addEventListener('click', (e) => { e.preventDefault(); performSearch(); });
     performSearch();

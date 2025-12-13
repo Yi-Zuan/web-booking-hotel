@@ -1,13 +1,22 @@
 require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql2');
-const cors = require('cors');
+const corsOptions = {
+    origin: 'https://web-booking-hotel-apz5.onrender.com', 
+    optionsSuccessStatus: 200
+};
 const path = require('path');
-
+const ratelimit = require("express-rate-limit");
 const app = express();
 const PORT = process.env.PORT || 3000;
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, 
+    max: 100, 
+    message: 'Bạn đã gửi quá nhiều yêu cầu, vui lòng thử lại sau 15 phút.'
+});
 
-app.use(cors());
+app.use(limiter);
+app.use(cors(corsOptions));
 app.use(express.json());
 // Cấu hình để chạy giao diện từ thư mục public
 app.use(express.static(path.join(__dirname, 'public')));
