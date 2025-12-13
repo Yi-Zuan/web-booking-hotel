@@ -1,10 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql2');
-const corsOptions = {
-    origin: 'https://web-booking-hotel-apz5.onrender.com', 
-    optionsSuccessStatus: 200
-};
+const cors = require('cors');
 const path = require('path');
 const ratelimit = require("express-rate-limit");
 const app = express();
@@ -25,7 +22,7 @@ const limiter = ratelimit({
     }
 });
 app.use(limiter);
-app.use(cors(corsOptions));
+app.use(cors);
 app.use(express.json());
 
 
