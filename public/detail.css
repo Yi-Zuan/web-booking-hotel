@@ -1,20 +1,25 @@
 /* =========================================
    DETAIL PAGE - LUXURY GOLD THEME
+   (Cấu trúc cũ - Màu sắc mới Sang trọng)
    ========================================= */
    :root {
-    --primary: #1a1a1a;
-    --secondary: #d4af37; /* Vàng kim */
+    --primary: #1a1a1a;       /* Đen than chì */
+    --secondary: #d4af37;     /* Vàng kim loại */
+    --text: #333;
+    --light-text: #666;
+    --border: #eee;
+    --background-light: #f9f9f9;
+    --rating-bg: #fffbf0;
+    
+    /* GRADIENT VÀNG KIM (Thay cho Tím/Hồng cũ) */
     --gold-gradient: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
-    /* Background Gradient nhẹ nhàng sang trọng */
-    --bg-page: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); 
-    --white: #ffffff;
-    --border-color: #e0e0e0;
+    --bg-page: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
 
 body {
-    background: var(--bg-page); /* Sử dụng nền gradient */
+    background: var(--bg-page);
     color: var(--primary);
     line-height: 1.6;
     padding: 40px 20px;
@@ -24,8 +29,8 @@ body {
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    background-color: var(--white);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+    background-color: #ffffff;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08); /* Bóng đổ mềm */
     border-radius: 16px;
     overflow: hidden;
     animation: slideUp 0.6s ease-out;
@@ -36,41 +41,56 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- MAIN LAYOUT (Giữ nguyên cấu trúc cột) --- */
+/* --- MAIN LAYOUT --- */
 .main-content {
     display: flex;
     padding: 40px;
     gap: 40px;
 }
-.hotel-info-column { flex: 2; }
-.summary-column { flex: 1; min-width: 320px; }
+
+.hotel-info-column {
+    flex: 2;
+}
+
+.summary-column {
+    flex: 1;
+    min-width: 320px;
+}
 
 /* --- HOTEL HEADER --- */
-.hotel-header { margin-bottom: 30px; }
+.hotel-header {
+    margin-bottom: 30px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 20px;
+}
 
 .hotel-name {
     font-family: 'Playfair Display', serif;
-    font-size: 42px;
+    font-size: 38px;
     font-weight: 700;
     color: var(--primary);
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     line-height: 1.2;
 }
+
 .hotel-name .stars {
     color: var(--secondary);
     font-size: 24px;
+    vertical-align: middle;
     margin-left: 10px;
 }
+
 .hotel-address {
-    color: #666;
+    color: var(--light-text);
     font-size: 15px;
     display: flex;
     align-items: center;
     gap: 8px;
 }
+
 .hotel-address i { color: var(--secondary); }
 
-/* --- GALLERY (HIỆU ỨNG ẢNH ĐẸP) --- */
+/* --- GALLERY (Thư viện ảnh) --- */
 .hotel-gallery {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -80,21 +100,17 @@ body {
 }
 
 .hotel-gallery img {
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    border: 1px solid transparent;
-    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
-.main-image img {
-    box-shadow: 0 15px 40px rgba(0,0,0,0.25);
-    z-index: 2;
-}
-
-.hotel-gallery img:hover {
-    transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 25px 60px rgba(212, 175, 55, 0.3); 
-    border-color: var(--secondary);
-    filter: brightness(1.05) contrast(1.02);
+.main-image {
+    grid-row: 1 / span 2;
 }
 
 .thumbnail-grid {
@@ -103,8 +119,16 @@ body {
     gap: 15px;
 }
 
+/* Hiệu ứng Hover ảnh (Zoom & Bóng đổ) */
+.hotel-gallery img:hover {
+    transform: scale(1.02);
+    box-shadow: 0 20px 50px rgba(212, 175, 55, 0.25); /* Bóng vàng */
+    z-index: 2;
+    filter: brightness(1.05);
+}
+
 .view-all-photos {
-    background: #222;
+    background: #222; /* Nền đen */
     color: white;
     display: flex;
     flex-direction: column;
@@ -115,23 +139,31 @@ body {
     font-weight: 600;
     transition: 0.3s;
 }
-.view-all-photos:hover { background: var(--secondary); }
 
-/* --- SECTIONS (CÁC MỤC THÔNG TIN) --- */
+.view-all-photos:hover {
+    background: var(--secondary); /* Hover chuyển vàng */
+}
+
+/* --- SECTIONS (Mô tả & Tiện nghi) --- */
 .section {
     margin-bottom: 40px;
-    padding-bottom: 30px;
-    border-bottom: 1px solid var(--border-color);
 }
-.section:last-child { border: none; }
 
 .section h3 {
     font-family: 'Playfair Display', serif;
     font-size: 24px;
     margin-bottom: 20px;
     color: var(--primary);
-    border-left: 4px solid var(--secondary); /* Gạch vàng bên trái */
+    position: relative;
     padding-left: 15px;
+    border-left: 4px solid var(--secondary); /* Gạch đứng màu vàng */
+}
+
+#hotel-desc {
+    color: var(--light-text);
+    line-height: 1.8;
+    font-size: 15px;
+    text-align: justify;
 }
 
 .facilities-grid {
@@ -139,32 +171,37 @@ body {
     flex-wrap: wrap;
     gap: 15px;
 }
-.facility-tag {
-    background: #fdfdfd;
+
+/* Tiện nghi dạng thẻ bo tròn */
+.facility-item {
+    background: #fff;
+    border: 1px solid var(--border);
     padding: 10px 20px;
     border-radius: 30px;
     font-size: 14px;
-    border: 1px solid #eee;
     display: flex;
     align-items: center;
     gap: 8px;
     transition: 0.3s;
 }
-.facility-tag i { color: var(--secondary); }
-.facility-tag:hover {
+
+.facility-item i { color: var(--secondary); }
+
+.facility-item:hover {
     border-color: var(--secondary);
     box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transform: translateY(-2px);
 }
 
-/* --- BOOKING SIDEBAR (CỘT PHẢI - GIỮ NGUYÊN CODE) --- */
+/* --- SUMMARY BOX (Cột bên phải - Form đặt phòng) --- */
 .summary-box {
-    background: var(--white);
-    border: 1px solid #eee;
+    background: #ffffff;
+    border: 1px solid var(--border);
     border-radius: 12px;
     padding: 30px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.06);
     position: sticky;
-    top: 20px;
+    top: 20px; /* Trượt theo khi cuộn */
 }
 
 .room-header {
@@ -173,56 +210,127 @@ body {
     gap: 10px;
     margin-bottom: 20px;
     padding-bottom: 15px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--border);
 }
-.room-header p { font-weight: 700; color: var(--secondary); text-transform: uppercase; letter-spacing: 1px; }
 
-.booking-dates { display: flex; gap: 10px; margin-bottom: 20px; }
-.date-item { flex: 1; }
-.date-item p { font-size: 12px; font-weight: bold; margin-bottom: 5px; color: #888; }
-.date-item input {
-    width: 100%; padding: 10px;
-    border: 1px solid #ddd; border-radius: 6px;
+.room-icon {
+    width: 40px; height: 40px;
+    background: var(--rating-bg);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--secondary);
+    font-size: 18px;
+}
+
+.room-header p {
+    font-weight: 700;
+    color: var(--primary);
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+/* Inputs trong form đặt phòng */
+.summary-box input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-bottom: 10px;
     font-family: inherit;
+    transition: 0.3s;
 }
 
+.summary-box input:focus {
+    border-color: var(--secondary);
+    outline: none;
+    background: #fffbf0; /* Nền vàng nhạt khi nhập */
+}
+
+.booking-dates {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.date-item { flex: 1; }
+.date-item .label {
+    font-size: 12px; font-weight: bold; margin-bottom: 5px; color: #888;
+}
+
+/* --- PRICE DETAILS (Chi tiết giá) --- */
 .price-details-box {
     background: #fcfcfc;
     padding: 20px;
     border-radius: 8px;
-    border: 1px dashed #ddd;
+    border: 1px dashed #ccc;
+    margin-top: 20px;
 }
+
 .price-item {
-    display: flex; justify-content: space-between;
-    margin-bottom: 10px; font-size: 14px; color: #555;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: var(--light-text);
+}
+
+.price-separator {
+    border: 0; border-top: 1px dashed #ddd; margin: 15px 0;
 }
 
 .total-price {
-    margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd;
-    display: flex; justify-content: space-between; align-items: center;
-}
-.total-price p:last-child {
-    font-size: 26px; font-weight: 700; color: #d82b45;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
 }
 
+.total-price p:first-child { font-weight: bold; font-size: 16px; }
+
+/* Giá tiền to đẹp */
+.total-price p:last-child {
+    font-size: 24px;
+    font-weight: 700;
+    color: #d82b45; /* Màu đỏ */
+}
+
+/* Nút xác nhận đặt phòng */
 .continue-btn {
-    width: 100%; padding: 16px;
-    background: var(--gold-gradient);
-    color: white; border: none; border-radius: 6px;
-    font-size: 16px; font-weight: 700; cursor: pointer;
-    margin-top: 25px; transition: all 0.3s;
-    text-transform: uppercase; letter-spacing: 1px;
+    width: 100%;
+    padding: 15px;
+    background: var(--gold-gradient); /* Gradient Vàng */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s;
     box-shadow: 0 10px 20px rgba(212, 175, 55, 0.2);
 }
+
 .continue-btn:hover {
     transform: translateY(-3px);
     box-shadow: 0 15px 30px rgba(212, 175, 55, 0.4);
 }
 
-/* RESPONSIVE (GIỮ NGUYÊN CODE MOBILE) */
+/* --- RESPONSIVE MOBILE --- */
 @media (max-width: 768px) {
-    .main-content { flex-direction: column; padding: 20px; }
-    .hotel-gallery { grid-template-columns: 1fr; height: auto; }
-    .thumbnail-grid { display: none; }
-    .hotel-name { font-size: 30px; }
+    .main-content {
+        flex-direction: column;
+        padding: 20px;
+    }
+    
+    .hotel-gallery {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+    
+    .thumbnail-grid { display: none; } /* Ẩn ảnh nhỏ trên mobile */
+    
+    .hotel-name { font-size: 28px; }
 }
