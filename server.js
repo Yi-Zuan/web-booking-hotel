@@ -9,11 +9,6 @@ const path = require('path');
 const ratelimit = require("express-rate-limit");
 const app = express();
 const PORT = process.env.PORT || 3000;
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, 
-    max: 100, 
-    message: 'Bạn đã gửi quá nhiều yêu cầu, vui lòng thử lại sau 15 phút.'
-});
 
 app.use(limiter);
 app.use(cors(corsOptions));
@@ -34,6 +29,17 @@ const dbConnection = mysql.createConnection({
 dbConnection.connect(err => {
     if (err) console.error('❌ Lỗi kết nối DB:', err.message);
     else console.log('✅ Đã kết nối Database thành công.');
+});
+
+const limiter = ratelimit({
+    windowMs: 15 * 60 * 1000, // Trong vòng 15 phút
+    max: 100, // Mỗi IP chỉ được gửi tối đa 100 yêu cầu
+    standardHeaders: true, 
+    legacyHeaders: false,
+    message: {
+        success: false, 
+        message: 'Bạn đã gửi quá nhiều yêu cầu! Vui lòng thử lại sau 15 phút.'
+    }
 });
 
 // --- 1. API TÌM KIẾM ---
