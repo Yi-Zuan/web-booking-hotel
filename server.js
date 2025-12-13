@@ -17,6 +17,17 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('trust proxy', 1);
 
+const limiter = ratelimit({
+    windowMs: 15 * 60 * 1000, // Trong vòng 15 phút
+    max: 100, // Mỗi IP chỉ được gửi tối đa 100 yêu cầu
+    standardHeaders: true, 
+    legacyHeaders: false,
+    message: {
+        success: false, 
+        message: 'Bạn đã gửi quá nhiều yêu cầu! Vui lòng thử lại sau 15 phút.'
+    }
+});
+
 // --- KẾT NỐI DATABASE ---
 const dbConnection = mysql.createConnection({
     host: process.env.DB_HOST,
@@ -30,17 +41,6 @@ const dbConnection = mysql.createConnection({
 dbConnection.connect(err => {
     if (err) console.error('❌ Lỗi kết nối DB:', err.message);
     else console.log('✅ Đã kết nối Database thành công.');
-});
-
-const limiter = ratelimit({
-    windowMs: 15 * 60 * 1000, // Trong vòng 15 phút
-    max: 100, // Mỗi IP chỉ được gửi tối đa 100 yêu cầu
-    standardHeaders: true, 
-    legacyHeaders: false,
-    message: {
-        success: false, 
-        message: 'Bạn đã gửi quá nhiều yêu cầu! Vui lòng thử lại sau 15 phút.'
-    }
 });
 
 // --- 1. API TÌM KIẾM ---
