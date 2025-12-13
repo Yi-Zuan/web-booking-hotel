@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <h3>${hotel.name}</h3>
                                 <p>📍 ${hotel.city}</p>
                                 <p style="color:#d82b45; font-weight:bold">${formatCurrency(hotel.price_per_night)}</p>
-                                <button class="btn-book" onclick="window.location.href='detail.html?id=${hotel.hotel_id}'">XEM CHI TIẾT</button>
+                                <button class="btn-book" onclick="window.location.href='hotel/detail.html?id=${hotel.hotel_id}'">XEM CHI TIẾT</button>
                             </div>
                         </div>`;
                     }).join('');
