@@ -2,12 +2,14 @@
    1. CẤU HÌNH CHUNG (VARIABLES & RESET)
    ========================================= */
    :root {
-    --primary-color: #212121; /* Đen than chì */
-    --accent-color: #d4af37;  /* Vàng kim loại */
-    --danger-color: #d82b45;  /* Đỏ điểm nhấn */
-    --text-light: #757575;
-    --bg-light: #f9f9f9;
+    /* Đổi màu chủ đạo sang Đen Than & Vàng Kim */
+    --primary-color: #1a1a1a; 
+    --accent-color: #d4af37;  /* Vàng Luxury */
+    --danger-color: #d82b45;
+    --text-light: #555;
+    --bg-light: #f8f8f8;
     --white: #ffffff;
+    --shadow-soft: 0 10px 30px rgba(0,0,0,0.08); /* Bóng đổ mượt hơn */
 }
 
 body {
@@ -524,4 +526,57 @@ body {
         margin-top: 10px;
         text-align: left;
     }
+}
+
+/* --- PHẦN TRANG TRÍ THÊM (DÁN VÀO CUỐI FILE) --- */
+
+/* 1. Navbar kính mờ sang trọng */
+.navbar {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+/* 2. Hero: Làm chữ nổi bật trên nền video */
+.hero-content h1 {
+    text-shadow: 0 4px 15px rgba(0,0,0,0.6);
+    letter-spacing: 1px;
+}
+
+/* 3. Search Box: Nổi lên bề mặt */
+.search-box {
+    box-shadow: 0 20px 50px rgba(0,0,0,0.15); /* Bóng đổ sâu hơn */
+    border-top: 4px solid var(--accent-color); /* Viền vàng điểm nhấn */
+}
+
+/* 4. Thẻ Khách sạn: Hiệu ứng nhấc lên khi di chuột */
+.hotel-card {
+    transition: all 0.4s ease;
+    border: 1px solid transparent;
+}
+.hotel-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    border-color: rgba(212, 175, 55, 0.3); /* Viền vàng mờ khi hover */
+}
+
+/* 5. Nút bấm đẹp hơn */
+.btn-book, #search-button {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.btn-book:hover, #search-button:hover {
+    background-color: var(--accent-color);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(212, 175, 55, 0.4);
+}
+
+/* 6. Input đẹp hơn */
+.input-group input:focus {
+    border-color: var(--accent-color);
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
 }

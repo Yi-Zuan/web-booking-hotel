@@ -1,19 +1,17 @@
 :root {
-    --primary: #FFD700;
-    --secondary: #C5B000;
-    --text: #222;
-    --light-text: #555;
-    --border: #EEEEEE;
-    --background-light: #FAFAFA;
-    --summary-bg: #FFFFFF;
-    --green-icon: var(--primary);
-    --rating-bg: #FFFBF0;
+    --primary: #1a1a1a; /* Đen */
+    --secondary: #d4af37; /* Vàng */
+    --text: #333;
+    --light-text: #666;
+    --border: #eee;
+    --background-light: #f9f9f9;
+    --rating-bg: #fffbf0;
     
-    /* Thêm các màu mới */
-    --gradient-purple: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --gradient-pink: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    --gradient-cyan: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    --gradient-green: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    /* ĐỔI HẾT MÀU LOÈ LOẸT THÀNH MÀU SANG TRỌNG */
+    --gradient-purple: linear-gradient(135deg, #1a1a1a 0%, #333 100%); /* Chuyển thành Đen gradient */
+    --gradient-pink: linear-gradient(135deg, #d4af37 0%, #b8860b 100%); /* Chuyển thành Vàng gradient */
+    --gradient-cyan: linear-gradient(135deg, #212121 0%, #444 100%);
+    --gradient-green: linear-gradient(135deg, #d4af37 0%, #f0e68c 100%);
 }
 
 * {
@@ -585,3 +583,53 @@ hr {
     0% { transform: translate(0, 0); }
     100% { transform: translate(20px, 20px); }
 }
+
+/* --- SỬA LẠI CÁC HIỆU ỨNG MÀU SẮC (DÁN VÀO CUỐI FILE) --- */
+
+/* 1. Sửa màu các icon tiện ích thành màu Vàng */
+.highlight-item i, .facility-item i {
+    color: var(--secondary);
+    text-shadow: none;
+}
+.highlight-item:hover, .facility-item:hover {
+    border-color: var(--secondary);
+    background: #fff;
+}
+
+/* 2. Nút "Xem tất cả ảnh" thành màu Đen */
+.view-all-photos {
+    background: #222; 
+    box-shadow: none;
+}
+.view-all-photos:hover {
+    background: var(--secondary);
+}
+
+/* 3. Nút "Đặt phòng ngay" thành màu Vàng Kim */
+.continue-btn {
+    background: linear-gradient(135deg, #d4af37, #b8860b);
+    box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+}
+.continue-btn:hover {
+    box-shadow: 0 15px 30px rgba(212, 175, 55, 0.5);
+}
+.continue-btn::before {
+    background: rgba(255,255,255,0.3); /* Hiệu ứng bóng loáng */
+}
+
+/* 4. Giá tiền to và rõ hơn */
+.total-price p:last-child {
+    background: none;
+    -webkit-text-fill-color: initial;
+    color: #d82b45; /* Màu đỏ cho giá tiền nổi bật */
+}
+
+/* 5. Tiêu đề mục */
+.section h3 {
+    background: none;
+    -webkit-text-fill-color: initial;
+    color: var(--primary);
+    border-left: 4px solid var(--secondary); /* Thêm gạch vàng bên trái */
+    padding-left: 15px;
+}
+.section h3::after { display: none; } /* Bỏ gạch chân cũ */
