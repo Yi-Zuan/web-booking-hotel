@@ -10,13 +10,10 @@ const ratelimit = require("express-rate-limit");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(limiter);
-app.use(cors(corsOptions));
-app.use(express.json());
-// Cấu hình để chạy giao diện từ thư mục public
-app.use(express.static(path.join(__dirname, 'public')));
 app.set('trust proxy', 1);
 
+// Cấu hình để chạy giao diện từ thư mục public
+app.use(express.static(path.join(__dirname, 'public')));
 const limiter = ratelimit({
     windowMs: 15 * 60 * 1000, // Trong vòng 15 phút
     max: 100, // Mỗi IP chỉ được gửi tối đa 100 yêu cầu
@@ -27,6 +24,10 @@ const limiter = ratelimit({
         message: 'Bạn đã gửi quá nhiều yêu cầu! Vui lòng thử lại sau 15 phút.'
     }
 });
+app.use(limiter);
+app.use(cors(corsOptions));
+app.use(express.json());
+
 
 // --- KẾT NỐI DATABASE ---
 const dbConnection = mysql.createConnection({
