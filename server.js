@@ -105,6 +105,37 @@ app.get('/api/offers', (req, res) => {
     });
 });
 
+// --- 8. API XEM LỊCH SỬ ĐẶT PHÒNG ---
+app.get('/api/user-bookings', (req, res) => {
+    const phone = req.query.phone;
+
+    // Bắt buộc phải có SĐT mới cho tìm
+    if (!phone) {
+        return res.json([]); 
+    }
+
+    // Câu lệnh SQL: Lấy thông tin đơn hàng KÈM THEO tên và ảnh khách sạn (dùng JOIN)
+    const sql = `
+        SELECT 
+            b.id, b.user_name, b.check_in_date, b.check_out_date, b.created_at, b.status,
+            h.name AS hotel_name, 
+            h.image_url, 
+            h.price_per_night
+        FROM bookings b
+        JOIN hotels h ON b.hotel_id = h.hotel_id
+        WHERE b.user_phone = ?
+        ORDER BY b.created_at DESC
+    `;
+
+    dbConnection.query(sql, [phone], (err, results) => {
+        if (err) {
+            console.error("Lỗi lấy lịch sử:", err);
+            return res.status(500).json({ error: 'Lỗi Database' });
+        }
+        res.json(results);
+    });
+});
+
 app.listen(PORT, () => {
     console.log(`Server chạy tại cổng ${PORT}`);
 });
