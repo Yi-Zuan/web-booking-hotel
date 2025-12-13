@@ -80,26 +80,21 @@ body {
 }
 
 .hotel-gallery img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    border-radius: 8px;
-    transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
-    cursor: pointer;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    border: 1px solid transparent;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-/* Hiệu ứng cho ảnh chính */
-.main-image { grid-row: 1 / span 2; }
 .main-image img {
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2); /* Bóng đổ sâu hơn */
+    box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+    z-index: 2;
 }
 
-/* Hiệu ứng khi di chuột vào ảnh */
 .hotel-gallery img:hover {
-    transform: scale(1.02);
-    box-shadow: 0 15px 40px rgba(212, 175, 55, 0.25); /* Ánh vàng nhẹ */
-    border: 1px solid var(--secondary);
-    filter: brightness(1.05);
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 25px 60px rgba(212, 175, 55, 0.3); 
+    border-color: var(--secondary);
+    filter: brightness(1.05) contrast(1.02);
 }
 
 .thumbnail-grid {
