@@ -237,11 +237,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 listDiv.innerHTML = '<p style="text-align:center; color:red">Lỗi kết nối server!</p>';
             });
     }
-
-    if (password.length < 6) {
-        return res.status(400).json({ message: 'Password quá ngắn' });
-      }
-
     // Init
     if (dom.searchBtn) dom.searchBtn.addEventListener('click', (e) => { e.preventDefault(); performSearch(); });
     performSearch();

@@ -7,8 +7,10 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// --- CẤU HÌNH MIDDLEWARE ---
 app.use(cors());
 app.use(express.json());
+
 // Cấu hình để chạy giao diện từ thư mục public
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -27,7 +29,11 @@ dbConnection.connect(err => {
     else console.log('✅ Đã kết nối Database thành công.');
 });
 
-// --- 1. API TÌM KIẾM ---
+// ==========================================
+// CÁC API CỦA WEBSITE
+// ==========================================
+
+// 1. API TÌM KIẾM KHÁCH SẠN
 app.get('/api/hotels', (req, res) => {
     const city = req.query.city;
     let sql = 'SELECT * FROM hotels';
@@ -42,7 +48,7 @@ app.get('/api/hotels', (req, res) => {
     });
 });
 
-// --- 2. API CHI TIẾT ---
+// 2. API CHI TIẾT KHÁCH SẠN
 app.get('/api/hotels/:id', (req, res) => {
     dbConnection.query('SELECT * FROM hotels WHERE hotel_id = ?', [req.params.id], (err, results) => {
         if (err) return res.status(500).json(err);
@@ -51,7 +57,7 @@ app.get('/api/hotels/:id', (req, res) => {
     });
 });
 
-// --- 3. API ĐĂNG KÝ ---
+// 3. API ĐĂNG KÝ
 app.post('/api/register', (req, res) => {
     const { fullName, email, password } = req.body;
     if (!fullName || !email || !password) return res.status(400).json({success: false, message: 'Thiếu thông tin'});
@@ -63,7 +69,7 @@ app.post('/api/register', (req, res) => {
     });
 });
 
-// --- 4. API ĐĂNG NHẬP ---
+// 4. API ĐĂNG NHẬP
 app.post('/api/login', (req, res) => {
     const { email, password } = req.body;
     const sql = 'SELECT * FROM users WHERE email = ? AND password = ?';
@@ -77,7 +83,7 @@ app.post('/api/login', (req, res) => {
     });
 });
 
-// --- 5. API LIÊN HỆ ---
+// 5. API LIÊN HỆ
 app.post('/api/contact', (req, res) => {
     const { fullName, email, message } = req.body;
     const sql = 'INSERT INTO contacts (full_name, email, message) VALUES (?, ?, ?)';
@@ -87,7 +93,7 @@ app.post('/api/contact', (req, res) => {
     });
 });
 
-// --- 6. API ĐẶT PHÒNG ---
+// 6. API ĐẶT PHÒNG
 app.post('/api/bookings', (req, res) => {
     const { hotelId, name, phone, dateStart, dateEnd } = req.body;
     const sql = 'INSERT INTO bookings (hotel_id, user_name, user_phone, check_in_date, check_out_date) VALUES (?, ?, ?, ?, ?)';
@@ -97,7 +103,7 @@ app.post('/api/bookings', (req, res) => {
     });
 });
 
-// --- 7. API ƯU ĐÃI ---
+// 7. API ƯU ĐÃI
 app.get('/api/offers', (req, res) => {
     dbConnection.query('SELECT * FROM offers', (err, results) => {
         if (err) return res.status(500).json(err);
@@ -105,16 +111,11 @@ app.get('/api/offers', (req, res) => {
     });
 });
 
-// --- 8. API XEM LỊCH SỬ ĐẶT PHÒNG ---
+// 8. API XEM LỊCH SỬ ĐẶT PHÒNG (Mới thêm)
 app.get('/api/user-bookings', (req, res) => {
     const phone = req.query.phone;
+    if (!phone) return res.json([]); 
 
-    // Bắt buộc phải có SĐT mới cho tìm
-    if (!phone) {
-        return res.json([]); 
-    }
-
-    // Câu lệnh SQL: Lấy thông tin đơn hàng KÈM THEO tên và ảnh khách sạn (dùng JOIN)
     const sql = `
         SELECT 
             b.id, b.user_name, b.check_in_date, b.check_out_date, b.created_at, b.status,
@@ -136,6 +137,7 @@ app.get('/api/user-bookings', (req, res) => {
     });
 });
 
+// --- KHỞI CHẠY SERVER ---
 app.listen(PORT, () => {
     console.log(`Server chạy tại cổng ${PORT}`);
 });
