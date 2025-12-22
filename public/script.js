@@ -194,35 +194,6 @@ window.handleAuthClick = function(event) {
     }
 
 
-// Xử lý khi bấm nút đăng nhập
-window.handleLogin = function() {
-    const data = {
-        email: document.getElementById('login-email').value,
-        password: document.getElementById('login-pass').value
-    };
-
-    if(!data.email || !data.password) {
-        alert("Vui lòng nhập email và mật khẩu!");
-        return;
-    }
-
-    postData(CONFIG.API.LOGIN, data)
-        .then(d => {
-            if (d.success) {
-                alert('Chào mừng ' + d.user.full_name);
-
-                localStorage.setItem('user', JSON.stringify(d.user));
-                
-                window.closeModal('login-modal');
-                
-                checkLoginState(); 
-            } else {
-                alert(d.message);
-            }
-        })
-        .catch(err => alert('Lỗi đăng nhập: ' + err));
-};
-
 // Xử lý Đăng Ký
 window.handleRegister = function() {
     const data = {
@@ -366,11 +337,25 @@ window.openOffers = function() {
     }
 
         // Khôi phục điểm đến đã tìm lần trước (nếu có)
-        const lastDestination = localStorage.getItem('lastDestination');
-        if (dom.destInput && lastDestination) {
-            dom.destInput.value = lastDestination;
-        }
-    
+    const lastDestination = localStorage.getItem('lastDestination');
+    if (dom.destInput && lastDestination) {
+        dom.destInput.value = lastDestination;
+    }
+
+    // Nút cuộn lên đầu trang
+    if (dom.scrollTopBtn) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 200) {
+                dom.scrollTopBtn.style.display = 'block';
+            } else {
+                dom.scrollTopBtn.style.display = 'none';
+            }
+        });
+
+        dom.scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
         // Nút cuộn lên đầu trang
         if (dom.scrollTopBtn) {
             window.addEventListener('scroll', () => {
