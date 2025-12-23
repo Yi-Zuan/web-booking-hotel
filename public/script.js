@@ -16,7 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
         destInput: document.getElementById('destination'),
         resultsDiv: document.getElementById('results'),
         resultTitle: document.getElementById('result-title'),
-        navLogin: document.getElementById('nav-login')
+        navLogin: document.getElementById('nav-login'),
+        scrollTopBtn: document.getElementById('scrollTopBtn') // Added reference if you use it
     };
 
     let allHotelsData = [];
@@ -24,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedUser = localStorage.getItem('user');
     if (savedUser && dom.navLogin) {
         const userObj = JSON.parse(savedUser);
-        dom.navLogin.innerText = userObj.full_name || 'Tài khoản';
+        dom.navLogin.innerHTML = `<i class="fa-solid fa-user"></i> ${userObj.full_name}`;
     }
 
     // 2: Các hàm tiện tích cơ bản
@@ -144,35 +145,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 5: Chức năng người dùng (Login, Register, Contact, Offers)
-// Hàm chạy ngay khi web tải xong để kiểm tra xem đã đăng nhập chưa
-document.addEventListener("DOMContentLoaded", function() {
-    checkLoginState();
-});
-
-// Hàm kiểm tra trạng thái và đổi tên nút
-function checkLoginState() {
-    const userJson = localStorage.getItem('user');
-    const navBtn = document.getElementById('nav-login');
     
-    if (userJson && navBtn) {
-        const user = JSON.parse(userJson);
-        navBtn.innerHTML = `<i class="fa-solid fa-user"></i> ${user.full_name}`; 
-    } else if (navBtn) {
-        navBtn.innerText = "Đăng nhập";
+    // Define checkLoginState globally within scope so other functions can use it
+    window.checkLoginState = function() {
+        const userJson = localStorage.getItem('user');
+        const navBtn = document.getElementById('nav-login');
+        
+        if (userJson && navBtn) {
+            const user = JSON.parse(userJson);
+            navBtn.innerHTML = `<i class="fa-solid fa-user"></i> ${user.full_name}`; 
+        } else if (navBtn) {
+            navBtn.innerText = "Đăng nhập";
+        }
     }
-}
 
-// HÀM MỚI: Xử lý khi bấm nút trên Menu
-window.handleAuthClick = function(event) {
-    event.preventDefault();
-    const user = localStorage.getItem('user');
+    // Run check immediately
+    checkLoginState();
 
-    if (user) {
-        window.openModalById('logout-modal');
-    } else {
-        window.openModalById('login-modal');
-    }
-};
+    // HÀM MỚI: Xử lý khi bấm nút trên Menu
+    window.handleAuthClick = function(event) {
+        event.preventDefault();
+        const user = localStorage.getItem('user');
+
+        if (user) {
+            window.openModalById('logout-modal');
+        } else {
+            window.openModalById('login-modal');
+        }
+    };
 
     window.confirmLogout = function() {
         localStorage.removeItem('user');
@@ -180,7 +180,8 @@ window.handleAuthClick = function(event) {
 
         checkLoginState();
 
-        window.openModalById('logout-success-modal');
+        const successModal = document.getElementById('logout-success-modal');
+        if (successModal) window.openModalById('logout-success-modal');
     };
 
     // Gợi ý nhỏ: tự động tắt thông báo sau vài giây (nếu muốn)
@@ -194,96 +195,96 @@ window.handleAuthClick = function(event) {
     }
 
     window.handleLogin = function() {
-    const data = {
-        email: document.getElementById('login-email').value,
-        password: document.getElementById('login-pass').value
+        const data = {
+            email: document.getElementById('login-email').value,
+            password: document.getElementById('login-pass').value
+        };
+
+        if(!data.email || !data.password) {
+            alert("Vui lòng nhập email và mật khẩu!");
+            return;
+        }
+
+        postData(CONFIG.API.LOGIN, data)
+            .then(d => {
+                if (d.success) {
+                    alert('Chào mừng ' + d.user.full_name);
+
+                    localStorage.setItem('user', JSON.stringify(d.user));
+                    
+                    window.closeModal('login-modal');
+                    
+                    checkLoginState(); 
+                } else {
+                    alert(d.message);
+                }
+            })
+            .catch(err => alert('Lỗi đăng nhập: ' + err));
     };
 
-    if(!data.email || !data.password) {
-        alert("Vui lòng nhập email và mật khẩu!");
-        return;
-    }
 
-    postData(CONFIG.API.LOGIN, data)
-        .then(d => {
-            if (d.success) {
-                alert('Chào mừng ' + d.user.full_name);
+    // Xử lý Đăng Ký
+    window.handleRegister = function() {
+        const data = {
+            fullName: document.getElementById('reg-name').value,
+            email: document.getElementById('reg-email').value,
+            password: document.getElementById('reg-pass').value
+        };
+        
+        if(!data.fullName || !data.email || !data.password) {
+            alert("Vui lòng nhập đầy đủ thông tin!");
+            return;
+        }
 
-                localStorage.setItem('user', JSON.stringify(d.user));
-                
-                window.closeModal('login-modal');
-                
-                checkLoginState(); 
-            } else {
+        postData(CONFIG.API.REGISTER, data)
+            .then(d => {
                 alert(d.message);
-            }
-        })
-        .catch(err => alert('Lỗi đăng nhập: ' + err));
-};
-
-
-// Xử lý Đăng Ký
-window.handleRegister = function() {
-    const data = {
-        fullName: document.getElementById('reg-name').value,
-        email: document.getElementById('reg-email').value,
-        password: document.getElementById('reg-pass').value
+                if (d.success) window.closeModal('register-modal');
+            })
+            .catch(err => alert('Lỗi kết nối: ' + err));
     };
-    
-    if(!data.fullName || !data.email || !data.password) {
-        alert("Vui lòng nhập đầy đủ thông tin!");
-        return;
-    }
 
-    postData(CONFIG.API.REGISTER, data)
-        .then(d => {
-            alert(d.message);
-            if (d.success) window.closeModal('register-modal');
-        })
-        .catch(err => alert('Lỗi kết nối: ' + err));
-};
-
-// Xử lý Liên Hệ
-window.handleContact = function() {
-    const data = {
-        fullName: document.getElementById('contact-name').value,
-        email: document.getElementById('contact-email').value,
-        message: document.getElementById('contact-msg').value
+    // Xử lý Liên Hệ
+    window.handleContact = function() {
+        const data = {
+            fullName: document.getElementById('contact-name').value,
+            email: document.getElementById('contact-email').value,
+            message: document.getElementById('contact-msg').value
+        };
+        postData(CONFIG.API.CONTACT, data)
+            .then(d => { alert(d.message); window.closeModal('contact-modal'); })
+            .catch(err => alert('Lỗi gửi liên hệ.'));
     };
-    postData(CONFIG.API.CONTACT, data)
-        .then(d => { alert(d.message); window.closeModal('contact-modal'); })
-        .catch(err => alert('Lỗi gửi liên hệ.'));
-};
 
-// Xử lý Ưu Đãi
-window.openOffers = function() {
-    window.openModalById('offers-modal');
-    const list = document.getElementById('offers-list');
-    list.innerHTML = '<p style="text-align:center">Đang tải...</p>';
-    
-    fetch(CONFIG.API.OFFERS)
-        .then(res => res.json())
-        .then(data => {
-            list.innerHTML = '';
-            if(!data || data.length === 0) { list.innerHTML = '<p style="text-align:center">Hiện chưa có ưu đãi nào.</p>'; return; }
-            data.forEach(o => {
-                const imgUrl = o.image_url || 'https://via.placeholder.com/300x120?text=No+Image';
-                
-                list.innerHTML += `
-                    <div class="hotel-card" style="padding:15px; border:1px dashed #d4af37; margin-bottom:10px;">
-                        <img src="${imgUrl}" style="width:100%; height:120px; object-fit:cover; border-radius:4px" onerror="this.src='https://via.placeholder.com/300x120'">
-                        <h3 style="margin-top:10px; font-size:18px">${o.title}</h3>
-                        <p style="font-size:14px; color:#555">${o.description}</p>
-                        <div style="margin-top:10px;">
-                            <strong style="background:#d4af37; color:white; padding:5px 10px; border-radius:4px;">CODE: ${o.discount_code}</strong>
-                        </div>
-                    </div>`;
-            });
-        })
-        .catch(() => list.innerHTML = '<p style="text-align:center; color:red">Lỗi tải ưu đãi.</p>');
-};
+    // Xử lý Ưu Đãi
+    window.openOffers = function() {
+        window.openModalById('offers-modal');
+        const list = document.getElementById('offers-list');
+        list.innerHTML = '<p style="text-align:center">Đang tải...</p>';
+        
+        fetch(CONFIG.API.OFFERS)
+            .then(res => res.json())
+            .then(data => {
+                list.innerHTML = '';
+                if(!data || data.length === 0) { list.innerHTML = '<p style="text-align:center">Hiện chưa có ưu đãi nào.</p>'; return; }
+                data.forEach(o => {
+                    const imgUrl = o.image_url || 'https://via.placeholder.com/300x120?text=No+Image';
+                    
+                    list.innerHTML += `
+                        <div class="hotel-card" style="padding:15px; border:1px dashed #d4af37; margin-bottom:10px;">
+                            <img src="${imgUrl}" style="width:100%; height:120px; object-fit:cover; border-radius:4px" onerror="this.src='https://via.placeholder.com/300x120'">
+                            <h3 style="margin-top:10px; font-size:18px">${o.title}</h3>
+                            <p style="font-size:14px; color:#555">${o.description}</p>
+                            <div style="margin-top:10px;">
+                                <strong style="background:#d4af37; color:white; padding:5px 10px; border-radius:4px;">CODE: ${o.discount_code}</strong>
+                            </div>
+                        </div>`;
+                });
+            })
+            .catch(() => list.innerHTML = '<p style="text-align:center; color:red">Lỗi tải ưu đãi.</p>');
+    };
 
-    // 6. Lịch Sử Đặt Phòng (SỬA LẠI PHẦN NÀY ĐỂ HIỆN GIÁ ĐÚNG)
+    // 6. Lịch Sử Đặt Phòng
     window.openHistoryModal = function() {
         const modals = document.querySelectorAll('.modal');
         modals.forEach(m => m.style.display = 'none');
@@ -303,7 +304,7 @@ window.openOffers = function() {
 
         fetch(`/api/user-bookings?phone=${phone}`)
             .then(res => {
-                if (!res.ok) throw new Error('Lỗi phản hồi từ server'); // Kiểm tra lỗi mạng
+                if (!res.ok) throw new Error('Lỗi phản hồi từ server');
                 return res.json();
             })
             .then(data => {
@@ -319,7 +320,6 @@ window.openOffers = function() {
                     const created = new Date(item.created_at).toLocaleDateString('vi-VN');
                     const img = item.image_url || CONFIG.DEFAULT_IMG;
                     
-                    // Ưu tiên hiển thị total_price (giá thực tế), nếu không có thì lấy price_per_night (giá gốc)
                     let displayPrice = item.total_price ? item.total_price : item.price_per_night;
                     displayPrice = displayPrice ? Number(displayPrice).toLocaleString() : '---';
 
@@ -364,7 +364,7 @@ window.openOffers = function() {
         }
     }
 
-        // Khôi phục điểm đến đã tìm lần trước (nếu có)
+    // Khôi phục điểm đến đã tìm lần trước (nếu có)
     const lastDestination = localStorage.getItem('lastDestination');
     if (dom.destInput && lastDestination) {
         dom.destInput.value = lastDestination;
@@ -384,21 +384,6 @@ window.openOffers = function() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     }
-        // Nút cuộn lên đầu trang
-        if (dom.scrollTopBtn) {
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 200) {
-                    dom.scrollTopBtn.style.display = 'block';
-                } else {
-                    dom.scrollTopBtn.style.display = 'none';
-                }
-            });
-    
-            dom.scrollTopBtn.addEventListener('click', () => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-        }
-    
 
     if (dom.searchBtn) dom.searchBtn.addEventListener('click', (e) => { e.preventDefault(); performSearch(); });
     performSearch();
